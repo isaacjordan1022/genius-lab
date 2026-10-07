@@ -7,6 +7,26 @@
     "build": "next build",
     "start": "next start --hostname 127.0.0.1 --port 3100",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/lib/*.test.ts"
+    "test": "node --import tsx --test src/lib/*.test.ts",
+    "format": "prettier --write src next.config.ts",
+    "format:check": "prettier --check src next.config.ts"
+  },
+  "dependencies": {
+    "canvas-confetti": "1.9.4",
+    "lucide-react": "1.52.0",
+    "motion": "14.0.0",
+    "next": "16.4.0",
+    "phaser": "4.2.1",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@types/canvas-confetti": "1.9.0",
+    "@types/node": "26.6.4",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "prettier": "3.9.9",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2"
   }
 }

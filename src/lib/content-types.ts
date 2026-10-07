@@ -1,6 +1,6 @@
 export type Question = {
   id: string;
-  kind: 'choice' | 'match' | 'open';
+  kind: "choice" | "match" | "open";
   prompt: string;
   choices?: string[];
   correct?: string;
@@ -22,7 +22,10 @@ export type Chunk = {
   forms: Question[][];
 };
 export type Answer = string | Record<string, string>;
-export type PublicQuestion = Omit<Question, 'correct' | 'matches' | 'exemplar' | 'explanation'> & {
+export type PublicQuestion = Omit<
+  Question,
+  "correct" | "matches" | "exemplar" | "explanation"
+> & {
   left?: string[];
   right?: string[];
 };
