@@ -1416,8 +1416,8 @@ export default function EnrichmentVisual({ kind }: { kind: DiagramKind }) {
 
   return (
     <div className="enrichment-visual-stack">
-      {lab}
       <RealWorldGallery kind={kind} />
+      {lab}
     </div>
   );
 }
