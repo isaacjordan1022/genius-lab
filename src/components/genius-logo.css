@@ -1,0 +1,70 @@
+.genius-logo {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 660px;
+}
+.genius-logo--icon {
+  max-width: 240px;
+}
+.app-frame .brand.genius-app-brand {
+  display: block;
+  padding: 0;
+  margin: 0 -3px;
+}
+.app-frame .genius-app-brand .genius-logo {
+  width: 228px;
+  max-width: 100%;
+}
+.genius-loading-logo {
+  width: min(360px, 85vw);
+  margin: 0 auto 24px;
+}
+.app-frame .account-logout {
+  background: transparent;
+  color: #e7f0ff;
+  border-color: #6f93d8;
+  box-shadow: 0 3px #102966;
+  margin-top: 20px;
+  width: 100%;
+  font-size: 18px;
+}
+.app-frame .account-logout:hover:not(:disabled) {
+  background: #3156ad;
+  color: #fff;
+}
+@media (max-width: 800px) {
+  .app-frame .brand.genius-app-brand {
+    width: 190px;
+    flex-shrink: 0;
+  }
+  .app-frame .account-logout {
+    margin-top: 12px;
+  }
+}
+.app-frame .genius-app-brand .genius-nav-icon {
+  display: none;
+}
+@media (max-width: 800px) {
+  .app-frame .brand.genius-app-brand {
+    width: 100%;
+    margin: 0;
+  }
+  .app-frame .genius-app-brand .genius-nav-wordmark {
+    display: none;
+  }
+  .app-frame .genius-app-brand .genius-nav-icon {
+    display: block;
+    width: 54px;
+    max-width: 100%;
+    margin: auto;
+  }
+  .app-frame .account-logout {
+    padding: 11px 0;
+    min-width: 0;
+    width: 100%;
+  }
+  .app-frame .account-logout span {
+    display: none;
+  }
+}

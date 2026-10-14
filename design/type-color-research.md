@@ -66,3 +66,8 @@ Owned files: `src/components/style-lab.tsx`, `src/components/style-lab.css`, `pu
 The component is a default-exported client component and imports its scoped stylesheet. It has no app route, app-state, game, avatar-component, or backend dependency. Parent composes it on `/design` or the chosen design route and places the avatar component after it with `id="avatars"`.
 
 Verified all ten CSS font-file references exist and all nine families include license files. Computed palette contrast directly. No app build or package modification performed by this agent to avoid collisions with the build team. Parent should run the integrated type/build checks and browser/mobile review.
+
+
+## Selected direction — current revision
+
+Isaac selected DynaPuff + Lexend and Tick as the companion. The lab now defaults to that pairing and offers twelve color families. Ticket artwork is a reusable SVG printer fixture with a replayable feed/foil animation, reduced-motion handling, and a clear sample balance. New palettes: Bubblegum, Tangerine, Forest, Midnight, Violet, Ocean and Olive.

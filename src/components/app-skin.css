@@ -1,0 +1,829 @@
+/* Learning Club: toy-box color, generous reading rhythm, one clear next action. */
+.app-frame {
+  --club-blue: #173a97;
+  --club-sky: #dceaff;
+  --club-ink: #213553;
+  --club-plum: #682b80;
+  --club-lilac: #f0dcff;
+  --club-coral: #b73549;
+  --club-blush: #ffe4de;
+  color: var(--club-ink);
+}
+.app-frame h1,
+.app-frame h2,
+.app-frame h3 {
+  font-family: DynaPuff, ui-rounded, sans-serif;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+}
+.app-frame h1 {
+  font-size: clamp(30px, 3.5vw, 46px);
+  line-height: 1.2;
+}
+.app-frame h2 {
+  font-size: clamp(23px, 2.2vw, 30px);
+  line-height: 1.3;
+}
+.app-frame p {
+  line-height: 1.65;
+  max-width: 68ch;
+}
+.app-frame .eyebrow {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+  color: #526481;
+  font-size: 18px;
+}
+.app-frame .fine,
+.app-frame small {
+  font-size: 18px;
+  color: #51637c;
+}
+.app-frame button {
+  font-weight: 500;
+  border: 2px solid #8498bf;
+  border-radius: 15px;
+  background: #f5f8ff;
+  color: #203d7e;
+  box-shadow: 0 4px 0 #a7b7d4;
+  min-height: 48px;
+  line-height: 1.4;
+}
+.app-frame button.primary {
+  background: var(--club-blue);
+  color: #edf4ff;
+  border-color: #12317f;
+  box-shadow:
+    0 5px 0 #0b2462,
+    inset 0 2px 0 #ffffff24;
+}
+.app-frame button.primary:hover {
+  background: #2449aa;
+}
+.app-frame button:disabled {
+  opacity: 1;
+  background: #e6eaf0;
+  color: #66748a;
+  border-color: #b6c0d0;
+  box-shadow: 0 3px 0 #c4ccd9;
+}
+.app-frame button:focus-visible,
+.app-frame a:focus-visible {
+  outline: 3px solid #df8c1c;
+  outline-offset: 4px;
+}
+.app-frame .quiet,
+.app-frame .text-button {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  min-height: 44px;
+}
+.app-frame .sidebar {
+  width: 254px;
+  padding: 32px 16px 24px;
+  background: var(--club-blue);
+  color: #edf4ff;
+  border: 0;
+  box-shadow: inset -5px 0 #112e7b;
+  z-index: 30;
+  overflow-y: auto;
+}
+.app-frame .main-wrap {
+  margin-left: 254px;
+}
+.app-frame .brand {
+  font-family: DynaPuff, ui-rounded, sans-serif;
+  font-weight: 500;
+  font-size: 25px;
+  gap: 16px;
+}
+.app-frame .logo-stamp {
+  background: #dceaff;
+  color: #173a97;
+  border-color: #a2c8ff;
+  outline-color: #759ee4;
+  box-shadow: 0 4px #0a256b;
+  font-weight: 500;
+}
+.app-frame .profile {
+  border-color: #ffffff26;
+  padding: 28px 8px 24px;
+  margin-bottom: 22px;
+}
+.app-frame .profile-avatar {
+  background: #f0dcff;
+  border-color: #c495e6;
+  color: #682b80;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  font-family: DynaPuff;
+  font-weight: 400;
+}
+.app-frame .profile small {
+  color: #c5d8fa;
+}
+.app-frame .nav-item {
+  color: #dfebff;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  min-height: 54px;
+  white-space: normal;
+  padding: 12px;
+  gap: 11px;
+}
+.app-frame .nav-item svg {
+  flex-shrink: 0;
+}
+.app-frame .nav-item.active {
+  background: #dceaff;
+  color: #173a97;
+  border-color: #eaf3ff;
+  box-shadow: 0 4px #092567;
+}
+.app-frame .nav-item:hover:not(:disabled):not(.active) {
+  background: #274caa;
+}
+.app-frame .sidebar-bottom {
+  padding: 28px 8px 0;
+}
+.app-frame .sidebar-bottom a {
+  color: #d3e5ff;
+  line-height: 1.4;
+}
+.app-frame .playground-link {
+  background: #284b9f;
+  border-color: #779adb;
+  color: #f4f7ff;
+  box-shadow: 0 3px #102c72;
+  padding: 10px;
+  margin-top: 18px;
+  width: 100%;
+  text-align: left;
+  font-size: 18px;
+}
+.app-frame .app-top {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  min-height: 76px;
+  height: auto;
+  background: #f7faf6f2;
+  backdrop-filter: blur(12px);
+  border-bottom: 2px solid #dce3ec;
+  color: #3b5578;
+  gap: 20px;
+  padding: 14px 38px;
+}
+.app-frame .app-top > span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 400;
+}
+.app-frame .global-wallet {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-shrink: 0;
+  background: #fff0bd;
+  color: #634213;
+  border: 2px dashed #cb9a38;
+  border-radius: 13px;
+  padding: 8px 16px;
+  font-size: 18px;
+}
+.app-frame .global-wallet strong {
+  font-family: DynaPuff;
+  font-weight: 400;
+  font-size: 25px;
+}
+.app-frame .workspace {
+  max-width: 1370px;
+  padding: 36px 38px 64px;
+}
+.app-frame .page-heading {
+  margin-bottom: 26px;
+}
+.app-frame .ticket-balance--illustrated {
+  width: 245px;
+  max-width: 36%;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  flex-shrink: 0;
+}
+.app-frame .ticket-balance--illustrated .ticket-display {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.app-frame .continue-card {
+  background: var(--club-blue);
+  color: #edf4ff;
+  border: 3px solid #0d2e85;
+  border-radius: 30px;
+  box-shadow: 0 8px 0 #b9cbea;
+  grid-template-columns: minmax(0, 1fr) 225px;
+  overflow: hidden;
+}
+.app-frame .continue-copy {
+  padding: 36px;
+}
+.app-frame .continue-copy h2 {
+  font-size: clamp(28px, 3vw, 40px);
+  max-width: 18ch;
+  margin: 22px 0 14px;
+}
+.app-frame .continue-copy p {
+  color: #dbe8ff;
+  max-width: 38ch;
+}
+.app-frame .continue-copy .chip {
+  background: #3155b2;
+  color: #eaf2ff;
+  border: 1px solid #6f92dc;
+}
+.app-frame .continue-copy .primary {
+  background: #dceaff;
+  color: #173a97;
+  border-color: #eef6ff;
+  box-shadow:
+    0 5px #09245f,
+    inset 0 2px #fff;
+  padding: 14px 24px;
+}
+.app-frame .continue-copy small {
+  color: #dce8ff;
+  display: block;
+  max-width: 44ch;
+  margin-top: 18px;
+}
+.app-frame .lesson-progress {
+  border-left: 2px dashed #7899e0;
+  background: #2446a1;
+  padding: 22px;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+}
+.app-frame .lesson-progress > .learning-avatar {
+  width: 145px;
+  height: 145px;
+  margin: -12px auto 0;
+  flex-shrink: 0;
+}
+.app-frame .lesson-progress > span {
+  font-family: DynaPuff;
+  font-weight: 400;
+  color: #edf4ff;
+  font-size: 42px;
+}
+.app-frame .lesson-progress > span small,
+.app-frame .lesson-progress p {
+  color: #dce8ff;
+}
+.app-frame .lesson-progress p {
+  margin: 3px 0 14px;
+}
+.app-frame .lesson-progress .text-button {
+  color: #f4f7ff;
+}
+.app-frame .progress-dots span {
+  background: #dceaff;
+  color: #173a97;
+  border-color: #9fc0fa;
+  width: 30px;
+  height: 30px;
+  font-weight: 500;
+}
+.app-frame .progress-dots .done {
+  background: #dcf5b7;
+  color: #315022;
+  border-color: #b8d98a;
+}
+.app-frame .panel {
+  border-color: #c7d4e5;
+  border-radius: 24px;
+  box-shadow: 0 4px #e0e6f0;
+}
+.app-frame .bonus {
+  background: #f0dcff;
+  border-color: #b586ca;
+  color: #682b80;
+}
+.app-frame .bonus:nth-child(2) {
+  background: #ffe4de;
+  border-color: #e1a4a3;
+  color: #9b314b;
+}
+.app-frame .bonus p {
+  color: inherit;
+  opacity: 0.95;
+  min-height: 60px;
+}
+.app-frame .bonus.locked {
+  background: #ece5f3;
+}
+.app-frame .bonus.locked:nth-child(2) {
+  background: #f6e7e3;
+}
+.app-frame .bonus .chip {
+  color: inherit;
+  border-color: currentColor;
+  background: #ffffff66;
+}
+.app-frame .bonus button:not(:disabled) {
+  background: #682b80;
+  color: #f7eaff;
+  border-color: #57206f;
+  box-shadow: 0 4px #421251;
+}
+.app-frame .bonus:nth-child(2) button:not(:disabled) {
+  background: #b73549;
+  color: #ffefeb;
+  border-color: #952335;
+  box-shadow: 0 4px #741c2b;
+}
+.app-frame .home-footer {
+  color: #415a7c;
+}
+.app-frame .app-footer {
+  border-color: #dbe3eb;
+  color: #647690;
+  font-size: 18px;
+}
+.week-command {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 32px;
+  background: #173a97;
+  color: #e7f0ff;
+  border: 3px solid #0e2e82;
+  border-radius: 26px;
+  padding: 28px 32px;
+  box-shadow: 0 7px #bbcce9;
+  margin: 25px 0 32px;
+  align-items: center;
+}
+.week-command h2 {
+  margin-bottom: 10px;
+}
+.week-command p {
+  margin: 0;
+  color: #d9e7ff;
+}
+.week-progress-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  border-left: 2px dashed #819ddb;
+  padding-left: 28px;
+}
+.week-progress-summary strong {
+  font-family: DynaPuff;
+  font-size: 44px;
+  font-weight: 400;
+  line-height: 1.1;
+}
+.week-progress-summary strong span {
+  font-size: 25px;
+}
+.week-progress-summary progress {
+  width: 100%;
+  height: 16px;
+  border: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  appearance: none;
+  margin-top: 6px;
+  background: #5675bd;
+}
+.week-progress-summary progress::-webkit-progress-bar {
+  background: #5675bd;
+  border-radius: 12px;
+}
+.week-progress-summary progress::-webkit-progress-value {
+  background: #e1f5b4;
+  border-radius: 12px;
+}
+.week-progress-summary progress::-moz-progress-bar {
+  background: #e1f5b4;
+  border-radius: 12px;
+}
+.app-frame .week-topics h2 {
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+.app-frame .week-list {
+  gap: 22px;
+}
+.app-frame .week-item {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  gap: 16px 22px;
+  border: 2px solid #c5d3e6;
+  border-radius: 24px;
+  padding: 25px;
+  background: #fff;
+  box-shadow: 0 4px #e0e7f0;
+}
+.app-frame .week-item--ready {
+  border-color: #7897d4;
+  background: #f4f8ff;
+  box-shadow: 0 5px #c0d1ed;
+}
+.app-frame .week-item--passed {
+  border-color: #98bba8;
+  background: #f1faf5;
+  box-shadow: 0 5px #d3e7db;
+}
+.app-frame .week-item--locked {
+  background: #f7f8fa;
+}
+.app-frame .week-number {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #e2ecff;
+  border: 2px solid #a6bde7;
+  color: #173a97;
+  font-family: DynaPuff;
+  font-weight: 400;
+  font-size: 24px;
+}
+.app-frame .week-number.done {
+  background: #d9f1e3;
+  border-color: #9fc9ae;
+  color: #28583e;
+}
+.app-frame .week-item h3 {
+  font-size: 23px;
+  line-height: 1.35;
+  margin: 5px 0 8px;
+}
+.app-frame .week-item p {
+  color: #536782;
+  margin: 0 0 8px;
+}
+.week-inline-chunks {
+  grid-column: 2/-1;
+  list-style: none;
+  margin: 0;
+  padding: 14px 0 0;
+  display: grid;
+  gap: 10px;
+  border-top: 1px solid #dbe4f0;
+}
+.week-inline-chunks li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 15px;
+  border: 1px solid #d4dfef;
+  border-radius: 16px;
+  background: #eef3fc;
+}
+.week-inline-chunks li:nth-child(3n + 2) {
+  background: #f2eaf7;
+  border-color: #dfcce8;
+}
+.week-inline-chunks li:nth-child(3n) {
+  background: #edf5ea;
+  border-color: #d2e1cb;
+}
+.week-inline-chunks li > div {
+  min-width: 0;
+  flex: 1;
+}
+.week-inline-chunks strong {
+  display: block;
+  font-weight: 500;
+  line-height: 1.45;
+}
+.week-inline-chunks li > div > span {
+  display: block;
+  font-size: 18px;
+  color: #586c83;
+  margin-top: 3px;
+}
+.chunk-count {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid #aebfd8;
+  color: #25477f;
+  font-family: DynaPuff;
+  font-weight: 400;
+  line-height: 1;
+}
+.chunk-status {
+  font-size: 18px;
+  color: #415d80;
+  text-align: right;
+  max-width: 140px;
+}
+.chunk-scored .chunk-status {
+  font-weight: 600;
+  color: #285c45;
+}
+.app-frame .weekly-discovery {
+  background: #f0dcff;
+  border-color: #bb92ce;
+  box-shadow: 0 5px #dec8e7;
+  color: #682b80;
+}
+.app-frame .weekly-discovery .eyebrow {
+  color: #77458a;
+}
+.app-frame .preview-bar {
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff2c9;
+  border: 2px solid #dfba68;
+  border-radius: 20px;
+  padding: 20px 24px;
+  margin: 24px 0;
+  color: #694711;
+}
+.preview-bar p {
+  margin: 5px 0 0;
+}
+.preview-bar button {
+  flex-shrink: 0;
+}
+.preview-bar strong {
+  font-family: DynaPuff;
+  font-weight: 500;
+  font-size: 22px;
+}
+.app-frame .game-card {
+  background: #e3f2e9;
+  border-color: #94bda5;
+  color: #235540;
+}
+.app-frame .game-card:nth-child(2) {
+  background: #efe2f8;
+  border-color: #c4a1d9;
+  color: #682b80;
+}
+.app-frame .game-card:nth-child(3) {
+  background: #ffe5dc;
+  border-color: #dfa08e;
+  color: #a13a32;
+}
+.app-frame .game-card p {
+  color: inherit;
+}
+.app-frame .game-symbol {
+  background: #ffffff77;
+  border: 2px solid currentColor;
+  border-radius: 20px;
+  color: inherit;
+  box-shadow: inset 0 -7px #ffffff55;
+}
+.app-frame .empty {
+  background: #eaf0fb;
+  border-color: #b3c6e5;
+}
+.app-frame .empty p {
+  color: #516886;
+}
+.app-frame .rank,
+.app-frame .lesson-step,
+.app-frame .question-rail button,
+.app-frame .choice-letter,
+.app-frame .week-number,
+.app-frame .progress-dots span,
+.app-frame .chunk-count {
+  display: grid;
+  place-items: center;
+  line-height: 1;
+  padding: 0;
+  text-indent: 0;
+}
+.app-frame .rank {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  color: #173a97;
+  background: #e1ecff;
+}
+.app-frame .score-row,
+.app-frame .leader-row {
+  border-color: #dce5f0;
+}
+.app-frame .game-best {
+  font-family: DynaPuff;
+  font-weight: 400;
+  color: #173a97;
+}
+@media (max-width: 1150px) {
+  .app-frame .sidebar {
+    width: 224px;
+    padding-inline: 12px;
+  }
+  .app-frame .main-wrap {
+    margin-left: 224px;
+  }
+  .app-frame .workspace {
+    padding: 30px 26px 54px;
+  }
+  .app-frame .app-top {
+    padding-inline: 26px;
+  }
+  .app-frame .continue-copy {
+    padding: 28px;
+  }
+  .app-frame .continue-card {
+    grid-template-columns: minmax(0, 1fr) 190px;
+  }
+}
+@media (max-width: 800px) {
+  .app-frame .sidebar {
+    width: 76px;
+    padding: 26px 9px;
+  }
+  .app-frame .main-wrap {
+    margin-left: 76px;
+  }
+  .app-frame .brand {
+    padding: 0;
+  }
+  .app-frame .nav-item {
+    padding: 12px 0;
+    justify-content: center;
+  }
+  .app-frame .app-top {
+    padding: 12px 22px;
+    min-height: 70px;
+  }
+  .app-frame .continue-card {
+    grid-template-columns: 1fr;
+  }
+  .app-frame .lesson-progress {
+    border-left: 0;
+    border-top: 2px dashed #7899e0;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 18px;
+    gap: 12px;
+  }
+  .app-frame .lesson-progress > .learning-avatar {
+    width: 100px;
+    height: 100px;
+    margin: 0;
+  }
+  .app-frame .lesson-progress > span {
+    font-size: 34px;
+  }
+  .week-command {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .week-progress-summary {
+    border-left: 0;
+    border-top: 1px solid #8da7dd;
+    padding: 18px 0 0;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+  .week-progress-summary progress {
+    flex-basis: 100%;
+  }
+  .app-frame .ticket-balance--illustrated {
+    width: 190px;
+  }
+  .app-frame .week-item {
+    grid-template-columns: 42px minmax(0, 1fr);
+    padding: 20px;
+    gap: 14px;
+  }
+  .app-frame .week-item > button {
+    grid-column: 2;
+    justify-self: start;
+    margin: 0;
+  }
+  .week-inline-chunks {
+    grid-column: 1/-1;
+  }
+  .week-inline-chunks li {
+    flex-wrap: wrap;
+  }
+  .chunk-status {
+    margin-left: 44px;
+    text-align: left;
+    max-width: none;
+  }
+  .app-frame .week-number {
+    width: 40px;
+    height: 40px;
+  }
+  .app-frame .preview-bar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .app-frame .page-heading {
+    align-items: center;
+  }
+}
+@media (max-width: 480px) {
+  .app-frame .sidebar {
+    width: 60px;
+    padding: 22px 5px;
+  }
+  .app-frame .main-wrap {
+    margin-left: 60px;
+  }
+  .app-frame .workspace {
+    padding: 25px 16px 45px;
+  }
+  .app-frame .app-top {
+    padding: 10px 14px;
+    gap: 10px;
+  }
+  .app-frame .app-top > span:first-child {
+    max-width: 105px;
+    font-size: 18px;
+  }
+  .app-frame .global-wallet {
+    padding: 7px 9px;
+    gap: 6px;
+  }
+  .app-frame .global-wallet strong {
+    font-size: 20px;
+  }
+  .app-frame .page-heading {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .app-frame .ticket-balance--illustrated {
+    width: 180px;
+    max-width: 70%;
+    margin-left: auto;
+  }
+  .app-frame .continue-copy {
+    padding: 24px;
+  }
+  .app-frame .continue-copy h2 {
+    font-size: 29px;
+  }
+  .app-frame .lesson-progress > .learning-avatar {
+    width: 85px;
+    height: 85px;
+  }
+  .app-frame .week-command {
+    padding: 22px;
+  }
+  .app-frame .week-item {
+    padding: 18px;
+    grid-template-columns: 36px minmax(0, 1fr);
+    gap: 12px;
+  }
+  .app-frame .week-number {
+    width: 34px;
+    height: 34px;
+    font-size: 21px;
+  }
+  .app-frame .week-item h3 {
+    font-size: 21px;
+  }
+  .week-inline-chunks li {
+    padding: 12px;
+    gap: 9px;
+  }
+  .week-inline-chunks li > div {
+    flex-basis: calc(100% - 45px);
+  }
+  .chunk-status {
+    margin-left: 41px;
+  }
+  .app-frame .preview-bar {
+    padding: 18px;
+  }
+  .app-frame .game-card {
+    grid-template-columns: 75px minmax(0, 1fr);
+    gap: 0 16px;
+  }
+  .app-frame .game-symbol {
+    font-size: 45px;
+    height: 110px;
+  }
+  .app-frame .game-card h2 {
+    font-size: 23px;
+  }
+}

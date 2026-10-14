@@ -1,0 +1,40 @@
+.mission-track-3d {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #bce9fa;
+  isolation: isolate;
+}
+.mission-track-3d canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.mission-track-unavailable {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 28px;
+  color: #174872;
+  background: #e0f3fb;
+  text-align: center;
+  font-size: 18px;
+  line-height: 1.5;
+}
+.mission-track-unavailable > span {
+  font-size: 48px;
+}
+.mission-track-unavailable strong {
+  font-family: var(--font-dynapuff), sans-serif;
+  font-size: 26px;
+  font-weight: 500;
+}
+.mission-track-unavailable p {
+  max-width: 32ch;
+  margin: 0;
+}

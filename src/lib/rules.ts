@@ -1,12 +1,17 @@
 import type { Answer, PublicQuestion, Question } from "./content-types";
-export function assessmentResult(scores: (number | null)[]) {
+export function assessmentResult(
+  scores: (number | null)[],
+  expectedCount = 15,
+) {
+  if (!Number.isInteger(expectedCount) || expectedCount < 1)
+    throw new Error("Invalid question count");
   if (
     scores.some((n) => n !== null && (!Number.isInteger(n) || n < 0 || n > 4))
   )
     throw new Error("Invalid rubric score");
   const points = scores.reduce<number>((sum, n) => sum + (n ?? 0), 0);
   const status =
-    scores.length !== 15
+    scores.length !== expectedCount
       ? "incomplete"
       : scores.some((n) => n === null)
         ? "pending"
@@ -14,9 +19,9 @@ export function assessmentResult(scores: (number | null)[]) {
   return {
     status,
     points,
-    maxPoints: 60,
-    percent: (points / 60) * 100,
-    passed: status === "final" && points >= 54,
+    maxPoints: expectedCount * 4,
+    percent: (points / (expectedCount * 4)) * 100,
+    passed: status === "final" && points * 10 >= expectedCount * 4 * 9,
   };
 }
 export function gradeObjective(q: Question, answer: Answer): number | null {
@@ -33,10 +38,11 @@ export function gradeObjective(q: Question, answer: Answer): number | null {
     : 0;
 }
 export function publicQuestion(q: Question): PublicQuestion {
-  const { correct, matches, exemplar, explanation, ...safe } = q;
+  const { correct, matches, exemplar, explanation, rubric, ...safe } = q;
   void correct;
   void exemplar;
   void explanation;
+  void rubric;
   return {
     ...safe,
     ...(matches

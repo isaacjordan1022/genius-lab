@@ -24,7 +24,7 @@ The PIN is a local development convenience, not a production account system. The
 - Saved partial answers, resume, immutable submitted attempts, deterministic objective grading, and four-criterion parent scoring for open responses.
 - A completed score of at least **54/60 (90%)** unlocks the next chunk. An incomplete/pending rubric score cannot pass. Passing once earns 100 **sample** tickets.
 - A simple arcade unlock after the first pass: playable Snake Trail, conceptual Match Studio, and three-lane Rally Run with timed sample review checkpoints. Run scores save separately; these prototypes do not award prize tickets.
-- A sample prize shelf, affordability meters, confirmation, atomic ticket deduction, order history, and a local parent notification inbox. Lifetime earnings do not fall when tickets are spent. Duplicate checkout cannot spend twice.
+- The Prize Room with researched product photos, golden experience tickets, affordability meters, confirmation, atomic ticket deduction, order history, and a local parent notification inbox. Lifetime earnings do not fall when tickets are spent. Duplicate checkout cannot spend twice.
 - Six real locally hosted font pairings, five palettes, three style directions, headline outline/fill controls, ticket/prize specimens, and three original SVG companions with blink/thumbs-up reactions. Font licenses included. No paid fonts purchased.
 
 ## The MVP we are building toward
@@ -44,7 +44,7 @@ The current sample week assumes Sunday–Thursday chunks and Friday test; calend
 
 `src/lib/store.ts` is a **local SQLite development adapter**, storing a small family document transactionally at `data/arcade.sqlite`. `ARCADE_DB_PATH` can point at an isolated test file. Nothing inside `data/` is committed. It refuses Vercel execution to prevent accidentally shipping ephemeral server storage. Production will replace this adapter with authenticated, family-scoped Postgres operations and a ticket ledger.
 
-Open answers stay pending until a parent scores them. No live AI service is connected, no microphone audio is recorded, and no real purchase or email is sent. The sample artwork shelf uses original icons. Course source references appear in teaching text. Detailed halachic content requires parent-selected sources.
+Open answers stay pending until a parent scores them. No live AI service is connected, no microphone audio is recorded, and no real purchase or email is sent. The Prize Room uses actual retailer product images; experience tickets are original SVG artwork. Course source references appear in teaching text. Detailed halachic content requires parent-selected sources.
 
 ## Checks
 

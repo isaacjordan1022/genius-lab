@@ -1,4 +1,16 @@
 @font-face {
+  font-family: DynaPuff;
+  src: url("/design/fonts/dynapuff-DynaPuff-wdth-wght.ttf") format("truetype");
+  font-weight: 400 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: Lexend;
+  src: url("/design/fonts/lexend-Lexend-wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
   font-family: Nunito;
   src: url("/design/fonts/nunito-Nunito-wght.ttf") format("truetype");
   font-display: swap;
@@ -8,10 +20,11 @@
 }
 body {
   margin: 0;
-  background: #f5f5f2;
+  background: #faf8f0 url("/design/quiet-shapes.svg") repeat;
+  background-size: 320px 240px;
   color: #232522;
-  font-family: Nunito, ui-rounded, system-ui, sans-serif;
-  font-size: 15px;
+  font-family: Lexend, ui-rounded, system-ui, sans-serif;
+  font-size: 18px;
   line-height: 1.55;
 }
 button,
@@ -42,7 +55,7 @@ button {
     background 0.15s;
 }
 button:hover:not(:disabled) {
-  background: #eceee8;
+  filter: brightness(0.97);
   transform: translateY(-1px);
 }
 button:active:not(:disabled) {
@@ -81,7 +94,7 @@ p {
   margin-top: 0;
 }
 h1 {
-  font-size: clamp(27px, 3.5vw, 40px);
+  font-size: max(18px, clamp(27px, 3.5vw, 40px));
   letter-spacing: -1.5px;
   line-height: 1.15;
   margin-bottom: 14px;
@@ -99,7 +112,7 @@ h3 {
 }
 small,
 .fine {
-  font-size: 12px;
+  font-size: 18px;
   color: #686d63;
 }
 .sr-only {
@@ -179,7 +192,7 @@ small,
   justify-content: flex-start;
   padding: 12px;
   white-space: nowrap;
-  font-size: 13px;
+  font-size: 18px;
 }
 .nav-item.active {
   background: #fff;
@@ -197,11 +210,11 @@ small,
 .sidebar-bottom a {
   display: flex;
   gap: 8px;
-  font-size: 12px;
+  font-size: 18px;
   align-items: center;
 }
 .sidebar-bottom p {
-  font-size: 10px;
+  font-size: 18px;
   color: #7c8176;
   margin: 9px 0 0;
 }
@@ -217,12 +230,12 @@ small,
   justify-content: space-between;
   padding: 0 42px;
   border-bottom: 1px solid #daddd4;
-  font-size: 12px;
+  font-size: 18px;
   font-weight: 700;
   background: #f9faf6;
 }
 .local-badge {
-  font-size: 10px;
+  font-size: 18px;
   border: 1px solid #d0d6c8;
   border-radius: 5px;
   padding: 4px 8px;
@@ -246,7 +259,7 @@ small,
 .eyebrow {
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  font-size: 10px;
+  font-size: 18px;
   font-weight: 900;
   color: #6a7162;
   margin-bottom: 10px;
@@ -269,7 +282,7 @@ small,
   line-height: 1;
 }
 .ticket-balance span {
-  font-size: 10px;
+  font-size: 18px;
   text-transform: uppercase;
   line-height: 1.3;
   font-weight: 800;
@@ -294,7 +307,7 @@ small,
   border-radius: 100px;
   background: #f7f9f1;
   padding: 5px 10px;
-  font-size: 10px;
+  font-size: 18px;
   font-weight: 800;
   white-space: nowrap;
 }
@@ -304,7 +317,7 @@ small,
   margin-top: 18px;
 }
 .continue-copy p {
-  font-size: 15px;
+  font-size: 18px;
   color: #606852;
 }
 .continue-copy small {
@@ -330,7 +343,7 @@ small,
   font-size: 25px;
 }
 .lesson-progress p {
-  font-size: 11px;
+  font-size: 18px;
   color: #747c68;
   margin: 10px 0 17px;
 }
@@ -346,7 +359,7 @@ small,
   border-radius: 50%;
   height: 25px;
   width: 25px;
-  font-size: 11px;
+  font-size: 18px;
 }
 .progress-dots .done,
 .week-number.done {
@@ -358,7 +371,7 @@ small,
   box-shadow: none;
   background: transparent;
   padding: 10px 0;
-  font-size: 12px;
+  font-size: 18px;
   text-decoration: underline;
   text-underline-offset: 4px;
 }
@@ -407,7 +420,7 @@ small,
 .bonus p {
   color: #707765;
   max-width: 330px;
-  font-size: 14px;
+  font-size: 18px;
   min-height: 44px;
 }
 .bonus button {
@@ -427,7 +440,7 @@ small,
   align-items: center;
   justify-content: space-between;
   padding-top: 28px;
-  font-size: 12px;
+  font-size: 18px;
   gap: 20px;
 }
 .home-footer > span {
@@ -438,7 +451,7 @@ small,
 .app-footer {
   border-top: 1px solid #d9ded1;
   padding: 16px 42px;
-  font-size: 10px;
+  font-size: 18px;
   color: #7c846e;
 }
 .lede {
@@ -476,14 +489,14 @@ small,
 }
 .week-item p {
   margin-bottom: 3px;
-  font-size: 12px;
+  font-size: 18px;
   color: #778066;
 }
 .week-item .eyebrow {
-  font-size: 9px;
+  font-size: 18px;
 }
 .week-item button {
-  font-size: 12px;
+  font-size: 18px;
 }
 .week-list + .fine {
   margin-top: 24px;
@@ -513,12 +526,12 @@ small,
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  font-size: 12px;
+  font-size: 18px;
   font-weight: 800;
   margin-bottom: 16px;
 }
 .prose {
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1.9;
 }
 .prose p:last-child {
@@ -528,7 +541,7 @@ small,
   align-self: start;
   position: sticky;
   top: 20px;
-  font-size: 13px;
+  font-size: 18px;
 }
 .lesson-aside ul {
   padding-left: 18px;
@@ -545,7 +558,7 @@ small,
   display: block;
 }
 .voice-placeholder p {
-  font-size: 11px;
+  font-size: 18px;
   color: #7d8769;
   margin-top: 8px;
 }
@@ -560,7 +573,7 @@ small,
   height: 32px;
   width: 32px;
   border-radius: 8px;
-  font-size: 11px;
+  font-size: 18px;
   box-shadow: none;
   border-color: #b9c3a8;
 }
@@ -579,7 +592,7 @@ small,
 .question-meta {
   display: flex;
   justify-content: space-between;
-  font-size: 10px;
+  font-size: 18px;
   text-transform: uppercase;
   letter-spacing: 0.8px;
   color: #7a846b;
@@ -620,7 +633,7 @@ small,
   box-shadow: 0 2px #adbda0;
 }
 .choice-letter {
-  font-size: 12px;
+  font-size: 18px;
   display: grid;
   place-items: center;
   width: 27px;
@@ -640,11 +653,11 @@ small,
   align-items: center;
 }
 .matches strong {
-  font-size: 14px;
+  font-size: 18px;
 }
 .matches select {
   width: 100%;
-  font-size: 13px;
+  font-size: 18px;
 }
 select,
 input,
@@ -670,18 +683,18 @@ textarea {
   box-shadow: none;
   border: 0;
   background: none;
-  font-size: 12px;
+  font-size: 18px;
 }
 .question-card > .fine {
   margin-top: 20px;
   margin-bottom: 0;
 }
 .save-state {
-  font-size: 11px;
+  font-size: 18px;
   color: #667557;
 }
 .rubric {
-  font-size: 12px;
+  font-size: 18px;
   margin-top: 16px;
 }
 .rubric summary {
@@ -701,11 +714,11 @@ textarea {
 }
 .score-number small {
   display: block;
-  font-size: 11px;
+  font-size: 18px;
   font-weight: 500;
 }
 .result-panel p {
-  font-size: 14px;
+  font-size: 18px;
   color: #6b775b;
 }
 .answer-review {
@@ -714,7 +727,7 @@ textarea {
   border-radius: 10px;
   margin-bottom: 10px;
   padding: 18px;
-  font-size: 13px;
+  font-size: 18px;
 }
 .answer-review summary {
   display: flex;
@@ -759,7 +772,7 @@ textarea {
   margin-bottom: 24px;
 }
 .game-card p {
-  font-size: 13px;
+  font-size: 18px;
   min-height: 60px;
   color: #6f7d5b;
 }
@@ -778,7 +791,7 @@ textarea {
   font-size: 20px;
 }
 .prize p {
-  font-size: 12px;
+  font-size: 18px;
   color: #727f5e;
   min-height: 45px;
 }
@@ -787,7 +800,7 @@ textarea {
   gap: 7px;
   align-items: center;
   margin-top: 20px;
-  font-size: 16px;
+  font-size: 18px;
 }
 .meter {
   height: 9px;
@@ -805,11 +818,11 @@ textarea {
 .prize > small {
   display: block;
   margin-bottom: 20px;
-  font-size: 10px;
+  font-size: 18px;
 }
 .prize > button {
   width: 100%;
-  font-size: 12px;
+  font-size: 18px;
 }
 .checkout-backdrop {
   position: fixed;
@@ -837,7 +850,7 @@ textarea {
   align-items: center;
   padding: 16px 0;
   border-bottom: 1px solid #e1e7d7;
-  font-size: 13px;
+  font-size: 18px;
 }
 .order-row:last-child,
 .score-row:last-child,
@@ -851,14 +864,14 @@ textarea {
 .order-row small,
 .score-row small {
   display: block;
-  font-size: 10px;
+  font-size: 18px;
 }
 .empty-note {
   border: 1px dashed #b9c7a3;
   border-radius: 12px;
   padding: 30px;
   text-align: center;
-  font-size: 13px;
+  font-size: 18px;
   color: #7b8968;
 }
 .leader-row > strong {
@@ -876,7 +889,7 @@ textarea {
   width: 25px;
   height: 25px;
   background: #e8eede;
-  font-size: 11px;
+  font-size: 18px;
 }
 .game-best {
   font-size: 38px;
@@ -887,7 +900,7 @@ textarea {
   border-radius: 10px;
   padding: 14px 18px;
   margin-bottom: 24px;
-  font-size: 13px;
+  font-size: 18px;
 }
 .loading {
   min-height: 100vh;
@@ -943,12 +956,7 @@ textarea {
   border-radius: 10px;
   white-space: pre-wrap;
 }
-/* The working product stays in neutral wireframe colors; the design lab owns its palette. */
-.app-frame,
-.loading,
-.parent-page {
-  filter: grayscale(1);
-}
+/* The chosen palette is applied by app-skin.css. */
 @media (max-width: 1150px) {
   .sidebar {
     width: 205px;
@@ -1056,7 +1064,7 @@ textarea {
     font-size: 30px;
   }
   .lesson-progress > span small {
-    font-size: 16px;
+    font-size: 18px;
   }
   .lesson-progress p {
     margin: 0;
@@ -1115,7 +1123,7 @@ textarea {
     padding: 17px;
   }
   .week-item h3 {
-    font-size: 15px;
+    font-size: 18px;
   }
   .week-number {
     width: 34px;
@@ -1123,7 +1131,7 @@ textarea {
   }
   .week-item button {
     padding: 8px 10px;
-    font-size: 10px;
+    font-size: 18px;
   }
   .section-heading {
     align-items: flex-start;
@@ -1146,14 +1154,14 @@ textarea {
   .logo-stamp {
     width: 31px;
     height: 36px;
-    font-size: 16px;
+    font-size: 18px;
   }
   .workspace {
     padding: 26px 16px;
   }
   .app-top {
     padding: 0 16px;
-    font-size: 10px;
+    font-size: 18px;
     overflow: hidden;
     white-space: nowrap;
   }
@@ -1177,14 +1185,14 @@ textarea {
   }
   .continue-copy .primary {
     width: 100%;
-    font-size: 12px;
+    font-size: 18px;
   }
   .lesson-progress {
     gap: 10px;
     padding: 16px;
   }
   .lesson-progress p {
-    font-size: 9px;
+    font-size: 18px;
   }
   .progress-dots {
     gap: 4px;
@@ -1201,7 +1209,7 @@ textarea {
     gap: 7px;
   }
   .question-meta {
-    font-size: 8px;
+    font-size: 18px;
     gap: 15px;
   }
   .question-card h2 {
@@ -1230,7 +1238,7 @@ textarea {
     padding: 23px;
   }
   .prose {
-    font-size: 15px;
+    font-size: 18px;
   }
   .app-footer {
     padding: 15px;
@@ -1256,5 +1264,128 @@ textarea {
   margin: auto;
   width: min(440px, calc(100vw - 32px));
   color: #232522;
-  filter: grayscale(1);
+}
+
+/* Shared readability contract: never shrink supporting interface text. */
+small {
+  font-size: 18px;
+}
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 500;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: DynaPuff, ui-rounded, sans-serif;
+  font-weight: 500;
+}
+
+.week-topics {
+  margin: 24px 0 30px;
+}
+.topic-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.topic-badges > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #e6edff;
+  color: #243e81;
+  border: 1px solid #bac9ee;
+  border-radius: 16px;
+  font-size: 18px;
+}
+.topic-badges > span:nth-child(3n + 2) {
+  background: #f5e8f7;
+  color: #653c70;
+  border-color: #d9c4df;
+}
+.topic-badges > span:nth-child(3n) {
+  background: #e5f1e9;
+  color: #335a43;
+  border-color: #bfd4c6;
+}
+.daily-topics {
+  margin: 20px 0;
+}
+.weekly-discovery {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin: 28px 0;
+  padding: 28px;
+  border: 2px solid #6075a0;
+  border-radius: 24px;
+  background: #e6edff;
+  box-shadow: 0 5px 0 #b8c7e7;
+}
+.weekly-discovery h2 {
+  margin: 8px 0;
+}
+.weekly-discovery p {
+  margin: 0;
+}
+.weekly-discovery button {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.discovery-icon {
+  font-size: 56px;
+}
+.bridge-lab svg {
+  display: block;
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto 18px;
+}
+.bridge-parts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.bridge-parts button[aria-pressed="true"] {
+  background: #ffde94;
+  color: #543912;
+  border-color: #8d631f;
+}
+.bridge-explanation {
+  min-height: 3.2em;
+  margin: 20px 0;
+}
+.teach-sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 14px 0;
+  font-size: 18px;
+}
+@media (max-width: 650px) {
+  .weekly-discovery {
+    flex-wrap: wrap;
+    padding: 20px;
+    gap: 16px;
+  }
+  .weekly-discovery button {
+    margin-left: 0;
+  }
+  .discovery-icon {
+    font-size: 40px;
+  }
+}
+.week-item .eyebrow {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+}
+.week-item p {
+  color: #4e5e44;
 }

@@ -1,13 +1,29 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import dynamic from "next/dynamic";
+import type { MissionReview } from "@/lib/mission-review";
 import "./games.css";
+const MissionTrack3D = dynamic(
+  () => import("./mission-track-3d").then((m) => m.MissionTrack3D),
+  { ssr: false },
+);
 
 type Game = "snake" | "match" | "rally";
 type Props = {
   game: Game;
+  preview?: boolean;
+  reviewQuestions?: MissionReview[];
   onFinish: (score: number, runId: string) => Promise<boolean>;
 };
+const PreviewContext = createContext(false);
 const NAMES = {
   snake: "Snake Trail",
   match: "Match Studio",
@@ -78,15 +94,18 @@ function End({
   restart: () => void;
   report: ReturnType<typeof useReport>;
 }) {
+  const preview = useContext(PreviewContext);
   return (
     <div className="g-end" role="status" aria-live="polite">
       <strong>Run complete · {score} points</strong>
       <p>
-        {report.status === "saved"
-          ? "Your run score is saved in your score history."
-          : report.status === "failed"
-            ? "Your score has not been confirmed saved. Retry to save this same run."
-            : "Saving your run score…"}{" "}
+        {preview
+          ? "Preview complete. This run stays out of your score history."
+          : report.status === "saved"
+            ? "Your run score is saved in your score history."
+            : report.status === "failed"
+              ? "Your score has not been confirmed saved. Retry to save this same run."
+              : "Saving your run score…"}{" "}
         These are practice points, not prize tickets.
       </p>
       {report.status === "failed" && (
@@ -99,21 +118,57 @@ function End({
   );
 }
 
-export default function GameRoom({ game, onFinish }: Props) {
+export default function GameRoom({
+  game,
+  onFinish,
+  preview = false,
+  reviewQuestions = [],
+}: Props) {
+  const reportFinish = useCallback(
+    (score: number, runId: string) =>
+      preview ? Promise.resolve(true) : onFinish(score, runId),
+    [preview, onFinish],
+  );
   const [run, setRun] = useState(0);
   const restart = () => setRun((v) => v + 1);
   return (
-    <section className="game-room" aria-label={NAMES[game]}>
-      <div className="g-eyebrow">PLAYABLE PROTOTYPE · PRACTICE POINTS</div>
-      <h2>{NAMES[game]}</h2>
-      {game === "snake" ? (
-        <Snake key={`snake-${run}`} onFinish={onFinish} restart={restart} />
-      ) : game === "match" ? (
-        <Match key={`match-${run}`} onFinish={onFinish} restart={restart} />
-      ) : (
-        <Rally key={`rally-${run}`} onFinish={onFinish} restart={restart} />
-      )}
-    </section>
+    <PreviewContext.Provider value={preview}>
+      <section
+        className={`game-room game-room--${game}`}
+        aria-label={NAMES[game]}
+      >
+        {game !== "rally" && (
+          <>
+            <div className="g-eyebrow">
+              {preview
+                ? "Preview · nothing is saved"
+                : "Play for practice points"}
+            </div>
+            <h2>{NAMES[game]}</h2>
+          </>
+        )}
+        {game === "snake" ? (
+          <Snake
+            key={`snake-${run}`}
+            onFinish={reportFinish}
+            restart={restart}
+          />
+        ) : game === "match" ? (
+          <Match
+            key={`match-${run}`}
+            onFinish={reportFinish}
+            restart={restart}
+          />
+        ) : (
+          <Rally
+            reviewQuestions={preview ? CHECKPOINTS : reviewQuestions}
+            key={`rally-${run}`}
+            onFinish={reportFinish}
+            restart={restart}
+          />
+        )}
+      </section>
+    </PreviewContext.Provider>
   );
 }
 type RunProps = { onFinish: Props["onFinish"]; restart: () => void };
@@ -230,8 +285,8 @@ function Snake({ onFinish, restart }: RunProps) {
               <rect
                 width="20"
                 height="20"
-                fill="#f5f5f3"
-                stroke="#d7d7d2"
+                fill="#edf8e1"
+                stroke="#d1e4bf"
                 strokeWidth=".5"
               />
             </pattern>
@@ -246,10 +301,10 @@ function Snake({ onFinish, restart }: RunProps) {
                 height="14"
                 rx="3"
                 fill="white"
-                stroke="#202020"
+                stroke="#c7513c"
                 strokeWidth="2"
               />
-              <path d="M4 2v10M9 2v10" stroke="#202020" />
+              <path d="M4 2v10M9 2v10" stroke="#c7513c" />
             </g>
           )}
           {state.body.map((p, i) => (
@@ -260,7 +315,7 @@ function Snake({ onFinish, restart }: RunProps) {
               width="16"
               height="16"
               rx={i === 0 ? 5 : 3}
-              fill={i === 0 ? "#111" : "#737373"}
+              fill={i === 0 ? "#174e40" : "#3b8b60"}
             />
           ))}
           <circle
@@ -457,7 +512,20 @@ type RaceState = {
   feedbackSeconds: number;
   hit: number[];
 };
-function Rally({ onFinish, restart }: RunProps) {
+function Rally({
+  onFinish,
+  restart,
+  reviewQuestions,
+}: RunProps & {
+  reviewQuestions: {
+    prompt: string;
+    choices: string[];
+    correct: number;
+    why: string;
+  }[];
+}) {
+  const [checkpoints] = useState(() => reviewQuestions.slice(-3));
+  const [graphicsUnavailable, setGraphicsUnavailable] = useState(false);
   const hidden = useHidden();
   const [started, setStarted] = useState(false);
   const [paused, setPaused] = useState(false);
@@ -483,7 +551,8 @@ function Rally({ onFinish, restart }: RunProps) {
     [],
   );
   useEffect(() => {
-    if (!started || state.done || paused || hidden) return;
+    if (!started || state.done || paused || hidden || graphicsUnavailable)
+      return;
     const key = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
         e.preventDefault();
@@ -492,9 +561,10 @@ function Rally({ onFinish, restart }: RunProps) {
     };
     window.addEventListener("keydown", key);
     return () => window.removeEventListener("keydown", key);
-  }, [started, state.done, paused, hidden, steer]);
+  }, [started, state.done, paused, hidden, graphicsUnavailable, steer]);
   useEffect(() => {
-    if (!started || state.done || paused || hidden) return;
+    if (!started || state.done || paused || hidden || graphicsUnavailable)
+      return;
     let last = performance.now();
     const timer = setInterval(() => {
       const now = performance.now();
@@ -515,7 +585,7 @@ function Rally({ onFinish, restart }: RunProps) {
                 ...s,
                 questionSeconds: 12,
                 score: Math.max(0, s.score - 15),
-                feedback: `Time! ${CHECKPOINTS[s.checkpoint].why}`,
+                feedback: `Time! ${checkpoints[s.checkpoint].why}`,
                 feedbackSeconds: 0,
               }
             : { ...s, questionSeconds };
@@ -534,7 +604,8 @@ function Rally({ onFinish, restart }: RunProps) {
             ),
         );
         const checkpoint =
-          s.nextCheckpoint < 3 && elapsed >= (s.nextCheckpoint + 1) * 8
+          s.nextCheckpoint < checkpoints.length &&
+          elapsed >= (s.nextCheckpoint + 1) * (30 / (checkpoints.length + 1))
             ? s.nextCheckpoint
             : null;
         return {
@@ -550,13 +621,13 @@ function Rally({ onFinish, restart }: RunProps) {
       });
     }, 50);
     return () => clearInterval(timer);
-  }, [started, state.done, paused, hidden]);
+  }, [started, state.done, paused, hidden, graphicsUnavailable, checkpoints]);
   const report = useReport(state.done, state.score, onFinish);
   const answer = (choice: number) =>
     setState((s) => {
       if (s.checkpoint === null || s.feedback || s.done || paused || hidden)
         return s;
-      const question = CHECKPOINTS[s.checkpoint];
+      const question = checkpoints[s.checkpoint];
       const correct = choice === question.correct;
       const bonus = 40 + Math.max(0, Math.floor((12 - s.questionSeconds) * 2));
       return {
@@ -575,20 +646,21 @@ function Rally({ onFinish, restart }: RunProps) {
       !state.hit.includes(item.id),
   );
   const checkpoint =
-    state.checkpoint === null ? null : CHECKPOINTS[state.checkpoint];
+    state.checkpoint === null ? null : checkpoints[state.checkpoint];
   return (
     <>
-      <p className="g-rules">
-        A 30-second drive with three review stops. Steer left and right, collect
-        tokens (+15), and avoid barriers (−20). At a checkpoint, the car
-        freezes: choose a correct answer for 40 points plus a speed bonus. A
-        wrong answer or timeout costs 15 run points. Your ticket wallet stays
-        safe.
-      </p>
-      <p className="g-sample-note">
-        Prototype checkpoints use three sample questions. Your saved lesson
-        knowledge will power the real daily mission.
-      </p>
+      {!started && (
+        <p className="g-rules">
+          Steer. Collect gold. Dodge barriers. Stop for {checkpoints.length}{" "}
+          quick questions.
+        </p>
+      )}
+      {!checkpoints.length && (
+        <p className="g-sample-note">
+          Finish some lesson questions to build your review course. You can try
+          a sample course in Preview playground.
+        </p>
+      )}
       <div className="g-toolbar">
         <Score score={state.score} />
         <span>
@@ -601,36 +673,33 @@ function Rally({ onFinish, restart }: RunProps) {
         )}
       </div>
       <div className="g-rally">
-        <div className="g-track" aria-hidden="true">
-          <div className="g-lane-line g-line-one" />
-          <div className="g-lane-line g-line-two" />
-          {visible.map((item) => (
-            <div
-              key={item.id}
-              className={`g-track-item g-${item.kind}`}
-              style={{
-                left: `${((item.lane + 0.5) * 100) / 3}%`,
-                top: `${((state.elapsed - item.spawn) / 2.4) * 82}%`,
-              }}
-            >
-              {item.kind === "gold" ? "✦" : "▰"}
-            </div>
-          ))}
-          <div
-            className="g-car"
-            style={{ left: `${((state.lane + 0.5) * 100) / 3}%` }}
-          >
-            ▤<span>● ●</span>
-          </div>
-          <div className="g-finish-line" />
-        </div>
+        <MissionTrack3D
+          elapsed={state.elapsed}
+          lane={state.lane}
+          items={visible}
+          paused={
+            !started ||
+            paused ||
+            hidden ||
+            state.done ||
+            state.checkpoint !== null
+          }
+          onUnavailable={() => setGraphicsUnavailable(true)}
+        />
         <span className="g-visually-hidden" role="status">
           Lane {state.lane + 1} of 3.
         </span>
-        {(!started || paused || hidden) && !state.done ? (
+        {!graphicsUnavailable &&
+        (!started || paused || hidden) &&
+        !state.done ? (
           <div className="g-overlay">
             {!started ? (
-              <button onClick={() => setStarted(true)}>Start Rally Run</button>
+              <button
+                disabled={!checkpoints.length}
+                onClick={() => setStarted(true)}
+              >
+                Start driving
+              </button>
             ) : (
               <strong>{hidden ? "Paused while away" : "Paused"}</strong>
             )}
@@ -638,7 +707,7 @@ function Rally({ onFinish, restart }: RunProps) {
         ) : checkpoint && !state.done ? (
           <div className="g-checkpoint">
             <div className="g-eyebrow">
-              REVIEW STOP {(state.checkpoint ?? 0) + 1} / 3
+              Review stop {(state.checkpoint ?? 0) + 1} / {checkpoints.length}
             </div>
             <h3>{checkpoint.prompt}</h3>
             <p>
@@ -668,6 +737,7 @@ function Rally({ onFinish, restart }: RunProps) {
           disabled={
             !started ||
             state.done ||
+            graphicsUnavailable ||
             paused ||
             hidden ||
             state.checkpoint !== null ||
@@ -683,6 +753,7 @@ function Rally({ onFinish, restart }: RunProps) {
           disabled={
             !started ||
             state.done ||
+            graphicsUnavailable ||
             paused ||
             hidden ||
             state.checkpoint !== null ||

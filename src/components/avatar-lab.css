@@ -23,6 +23,7 @@
   transform-origin: center;
   animation: companion-natural-blink 8s 2s infinite;
 }
+.learning-avatar__celebrating-arm,
 .learning-avatar__thumb {
   opacity: 0;
 }
@@ -32,9 +33,11 @@
 .learning-avatar--blink .learning-avatar__eyes {
   animation: companion-blink 0.6s ease-in-out;
 }
+.learning-avatar--celebrate .learning-avatar__celebrating-arm,
 .learning-avatar--celebrate .learning-avatar__thumb {
   opacity: 1;
 }
+.learning-avatar--celebrate .learning-avatar__resting-arm,
 .learning-avatar--celebrate .learning-avatar__resting-hand {
   opacity: 0;
 }
@@ -90,7 +93,11 @@
   --lab-ink: #27332f;
   --lab-paper: #f7f6ee;
   color: var(--lab-ink);
-  padding: clamp(24px, 5vw, 64px) 0;
+  font-family: "Lexend", sans-serif;
+  padding: clamp(24px, 5vw, 64px) 26px;
+  max-width: 1252px;
+  width: 100%;
+  margin-inline: auto;
   scroll-margin-top: 24px;
 }
 .avatar-lab * {
@@ -101,13 +108,13 @@
   margin-bottom: 30px;
 }
 .avatar-lab__chapter {
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 800;
   margin: 0 0 10px;
 }
 .avatar-lab__intro h2 {
-  font-family: var(--font-display, inherit);
-  font-size: clamp(32px, 4.5vw, 56px);
+  font-family: "DynaPuff", sans-serif;
+  font-size: max(18px, clamp(32px, 4.5vw, 56px));
   letter-spacing: -0.035em;
   line-height: 1.03;
   margin: 0 0 18px;
@@ -115,7 +122,7 @@
 }
 .avatar-lab__intro > p:last-child {
   max-width: 570px;
-  font-size: 17px;
+  font-size: 18px;
   line-height: 1.6;
   margin: 0;
 }
@@ -139,10 +146,8 @@
   min-height: 490px;
   padding: 42px 20px;
   background-color: var(--stage);
-  background-image:
-    linear-gradient(90deg, #ffffff0d 1px, transparent 1px),
-    linear-gradient(#ffffff0d 1px, transparent 1px);
-  background-size: 28px 28px;
+  background-image: url("/design/quiet-shapes.svg");
+  background-size: 320px 240px;
   color: var(--stage-light);
   border-right: 2px solid var(--lab-ink);
 }
@@ -197,7 +202,7 @@
   filter: drop-shadow(0 10px 0 #0002);
 }
 .avatar-lab__stage-caption {
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 700;
   letter-spacing: 0.01em;
   background: #0002;
@@ -228,7 +233,7 @@
   background: #e9ece4;
   color: var(--lab-ink);
   font: inherit;
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 800;
   padding: 3px 2px 12px;
   cursor: pointer;
@@ -242,6 +247,7 @@
   animation: none;
 }
 .avatar-lab__details h3 {
+  font-family: "DynaPuff", sans-serif;
   font-size: 32px;
   line-height: 1.1;
   font-weight: 900;
@@ -249,7 +255,7 @@
   letter-spacing: -0.03em;
 }
 .avatar-lab__description {
-  font-size: 17px;
+  font-size: 18px;
   line-height: 1.55;
   margin: 0 0 24px;
   max-width: 340px;
@@ -268,7 +274,7 @@
   min-height: 46px;
   padding: 10px 15px;
   font: inherit;
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 800;
   cursor: pointer;
   transition:
@@ -280,7 +286,7 @@
   box-shadow: 0 1px 0 var(--lab-ink);
 }
 .avatar-lab__motion-note {
-  font-size: 13px;
+  font-size: 18px;
   line-height: 1.6;
   color: #566257;
   margin: 20px 0 24px;
@@ -291,7 +297,7 @@
   align-items: center;
   gap: 16px;
   color: var(--lab-ink);
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 800;
   text-underline-offset: 4px;
   min-height: 40px;
@@ -301,7 +307,7 @@
   font-size: 22px;
 }
 .avatar-lab__live {
-  font-size: 12px;
+  font-size: 18px;
   color: #59635b;
   min-height: 20px;
   margin: 10px 0 0;
@@ -313,7 +319,7 @@
   margin-top: 25px;
 }
 .avatar-lab__notes p {
-  font-size: 14px;
+  font-size: 18px;
   line-height: 1.65;
   margin: 0;
   max-width: 480px;
@@ -337,7 +343,7 @@
     max-width: 290px;
   }
   .avatar-lab__stage-sticker {
-    font-size: 17px;
+    font-size: 18px;
     margin-left: 0;
   }
   .avatar-lab__details {
@@ -370,4 +376,222 @@
   .avatar-lab__actions button {
     transition: none;
   }
+}
+
+/* Each new gesture swaps the entire connected limb, including the cuff and hand. */
+.learning-avatar__greeting-arm,
+.learning-avatar__thinking-arm,
+.learning-avatar__thinking-mouth,
+.learning-avatar__thought {
+  display: none;
+}
+.learning-avatar--greeting .learning-avatar__resting-arm,
+.learning-avatar--thinking .learning-avatar__resting-arm,
+.learning-avatar--thinking .learning-avatar__happy-mouth {
+  display: none;
+}
+.learning-avatar--greeting .learning-avatar__greeting-arm,
+.learning-avatar--thinking .learning-avatar__thinking-arm,
+.learning-avatar--thinking .learning-avatar__thinking-mouth,
+.learning-avatar--thinking .learning-avatar__thought {
+  display: inline;
+}
+.learning-avatar--greeting .learning-avatar__greeting-arm {
+  transform-origin: 205px 203px;
+  animation: tick-wave 900ms ease-in-out both;
+}
+.learning-avatar--printing .learning-avatar__ticket {
+  transform-origin: 152px 211px;
+  animation: tick-print 1.1s steps(4, end) both;
+}
+.learning-avatar--printing .learning-avatar__sparks {
+  opacity: 1;
+}
+@keyframes tick-wave {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  25%,
+  65% {
+    transform: rotate(-8deg);
+  }
+  45%,
+  85% {
+    transform: rotate(4deg);
+  }
+}
+@keyframes tick-print {
+  from {
+    transform: scaleY(0.12);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+.avatar-lab__character-sheet {
+  margin-top: 42px;
+}
+.avatar-lab__sheet-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 30px;
+  margin-bottom: 22px;
+}
+.avatar-lab__sheet-heading h3 {
+  font:
+    500 clamp(23px, 3vw, 34px)/1.2 "DynaPuff",
+    sans-serif;
+  margin: 0;
+  max-width: 500px;
+}
+.avatar-lab__sheet-heading > p {
+  font-size: 18px;
+  line-height: 1.7;
+  max-width: 330px;
+  margin: 0;
+}
+.avatar-lab__pose-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+.avatar-lab__pose {
+  --pose-paper: #e8efff;
+  padding: 18px 20px 22px;
+  border: 2px solid #27332f;
+  border-radius: 23px;
+  box-shadow: 0 5px 0 #27332f;
+  background: var(--pose-paper);
+  color: #173465;
+  font: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform 0.15s,
+    box-shadow 0.15s;
+}
+.avatar-lab__pose:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 0 #27332f;
+}
+.avatar-lab__pose:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 #27332f;
+}
+.avatar-lab__pose--blink {
+  --pose-paper: #f2e9fc;
+}
+.avatar-lab__pose--greeting {
+  --pose-paper: #fff0d0;
+}
+.avatar-lab__pose--thinking {
+  --pose-paper: #e3f3e5;
+}
+.avatar-lab__pose--printing {
+  --pose-paper: #ffead7;
+}
+.avatar-lab__pose--celebrate {
+  --pose-paper: #f8e5ed;
+}
+.avatar-lab__pose-number {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.avatar-lab__pose .learning-avatar {
+  align-self: center;
+  width: min(100%, 235px);
+  margin: 4px 0 10px;
+}
+.avatar-lab__pose strong {
+  font:
+    550 20px/1.2 "DynaPuff",
+    sans-serif;
+  margin-bottom: 10px;
+}
+.avatar-lab__pose-line {
+  font-size: 18px;
+  line-height: 1.55;
+}
+.avatar-lab__pose-use {
+  border-top: 1px solid #17346526;
+  margin-top: 14px;
+  padding-top: 12px;
+  font-size: 18px;
+  line-height: 1.7;
+}
+/* Sheets show the held pose; a button plays the one-off reaction on the stage. */
+.avatar-lab__pose .learning-avatar * {
+  animation: none;
+}
+.avatar-lab__pose--blink .learning-avatar__eyes {
+  transform: scaleY(0.08);
+}
+@media (max-width: 900px) {
+  .avatar-lab__pose-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 540px) {
+  .avatar-lab__sheet-heading {
+    display: block;
+  }
+  .avatar-lab__sheet-heading > p {
+    margin-top: 15px;
+  }
+  .avatar-lab__pose-grid {
+    gap: 13px;
+  }
+  .avatar-lab__pose {
+    padding: 13px 11px 16px;
+    border-radius: 17px;
+  }
+  .avatar-lab__pose strong {
+    font-size: 18px;
+  }
+  .avatar-lab__pose-line,
+  .avatar-lab__pose-use {
+    font-size: 18px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .learning-avatar--greeting .learning-avatar__greeting-arm,
+  .learning-avatar--printing .learning-avatar__ticket {
+    animation: none;
+  }
+  .avatar-lab__pose {
+    transition: none;
+  }
+  .avatar-lab__pose:hover {
+    transform: none;
+  }
+}
+
+.avatar-lab :is(h2, h3) {
+  font-weight: 500;
+}
+.avatar-lab__customize {
+  margin-bottom: 24px;
+  padding: 18px;
+  border: 1px solid #bcc9c2;
+  border-radius: 16px;
+}
+.avatar-lab__customize summary {
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 500;
+}
+.avatar-lab__customize[open] summary {
+  margin-bottom: 20px;
+}
+.avatar-lab__customize p {
+  font-size: 18px;
+  line-height: 1.6;
+  margin-top: 18px;
 }

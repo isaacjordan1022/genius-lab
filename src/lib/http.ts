@@ -46,8 +46,14 @@ export function parentLogin(pin: unknown) {
   return g.parentToken;
 }
 export function fail(e: unknown, status = 400) {
+  const auth = e instanceof Error && "status" in e && typeof e.status === "number";
+  if (auth) status = e.status as number;
+  // Do not expose database connection details or driver diagnostics to the child.
+  const internal = e instanceof Error && ("code" in e || /password authentication|connect |ECONN|relation .*does not exist|SSL|postgres|DATABASE_URL/i.test(e.message));
+  if (internal) status = 503;
+  const message = internal ? "The learning service could not connect. Please try again." : e instanceof Error ? e.message : "Something went wrong.";
   return NextResponse.json(
-    { error: e instanceof Error ? e.message : "Something went wrong." },
+    { error: message, ...(status === 401 ? { code: "AUTH_REQUIRED" } : {}) },
     { status },
   );
 }

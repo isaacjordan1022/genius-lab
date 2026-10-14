@@ -1,0 +1,12 @@
+/sources
+/node_modules
+/.next
+/.git
+/.env*
+/data
+/test-results
+/docs
+/design
+/scripts
+*.md
+*.tsbuildinfo

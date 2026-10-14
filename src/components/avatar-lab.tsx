@@ -4,17 +4,18 @@ import { useEffect, useRef, useState } from "react";
 import "./avatar-lab.css";
 
 export type AvatarCharacter = "robot" | "comet" | "pencil";
-export type AvatarMood = "idle" | "blink" | "celebrate";
+export type AvatarMood =
+  "idle" | "blink" | "celebrate" | "greeting" | "thinking" | "printing";
 
 const companions = {
   robot: {
-    name: "Flip",
+    name: "Tick",
     description:
-      "A ticket-machine tinkerer. Big ideas. Slightly squeaky shoes.",
-    role: "The arcade companion",
+      "Your little ticket-printing companion. Big ideas, warm cheers, and a pocket full of possibility.",
+    role: "Your ticket-printing companion",
     color: "#183caa",
     light: "#dbeaff",
-    file: "flip-ticket-robot.svg",
+    file: "tick-ticket-robot.svg",
   },
   comet: {
     name: "Orbit",
@@ -108,63 +109,377 @@ function Thumb({ x = 236, y = 161 }: { x?: number; y?: number }) {
   );
 }
 
+const tickPoses: {
+  mood: AvatarMood;
+  title: string;
+  line: string;
+  use: string;
+}[] = [
+  {
+    mood: "idle",
+    title: "Right here with you",
+    line: "Ready when you are.",
+    use: "The calm dashboard companion.",
+  },
+  {
+    mood: "blink",
+    title: "A tiny hello",
+    line: "Yep, still listening!",
+    use: "A small pause between ideas.",
+  },
+  {
+    mood: "greeting",
+    title: "Welcome back",
+    line: "Got your thinking cap?",
+    use: "A wave when a lesson begins.",
+  },
+  {
+    mood: "thinking",
+    title: "Let’s figure it out",
+    line: "What clue could help?",
+    use: "An invitation to explain or try again.",
+  },
+  {
+    mood: "printing",
+    title: "Fresh off the press",
+    line: "You earned these!",
+    use: "Tickets arrive after a learning milestone.",
+  },
+  {
+    mood: "celebrate",
+    title: "That’s the spirit",
+    line: "Look how far you’ve come.",
+    use: "A thumbs-up for thoughtful progress.",
+  },
+];
+
+function RobotGesture() {
+  return (
+    <>
+      <g className="learning-avatar__greeting-arm">
+        <path
+          d="M 205 203 L 232 207 Q 257 209 258 183 L 258 164"
+          fill="none"
+          strokeWidth="18"
+        />
+        <path
+          d="M 205 203 L 232 207 Q 257 209 258 183 L 258 164"
+          fill="none"
+          stroke="#8bbcff"
+          strokeWidth="10"
+        />
+        <circle cx="241" cy="204" r="7" fill="#c4dfff" strokeWidth="3" />
+        <rect
+          x="248"
+          y="158"
+          width="22"
+          height="11"
+          rx="4"
+          fill="#5b98ed"
+          strokeWidth="3"
+        />
+        <path
+          d="M 249 158 Q 242 148 238 139 Q 235 133 240 131 Q 244 129 248 137 L 250 140 L 246 119 Q 245 113 249 112 Q 254 111 255 117 L 258 132 L 257 111 Q 257 105 262 105 Q 267 105 267 111 V 133 L 271 115 Q 272 110 277 112 Q 281 113 279 120 L 276 136 L 281 125 Q 284 120 288 123 Q 291 125 288 131 L 279 150 Q 276 159 269 162 Z"
+          fill="#eef6ff"
+          strokeWidth="3.5"
+        />
+        <path d="M 253 146 Q 260 140 267 146" fill="none" strokeWidth="2" />
+        <path
+          d="M 286 102 L 292 95 M 295 113 L 305 111"
+          fill="none"
+          stroke="#e7ad39"
+          strokeWidth="3"
+        />
+      </g>
+      <g className="learning-avatar__thinking-arm">
+        <path
+          d="M 205 204 Q 241 218 242 193 Q 241 181 227 175"
+          fill="none"
+          strokeWidth="18"
+        />
+        <path
+          d="M 205 204 Q 241 218 242 193 Q 241 181 227 175"
+          fill="none"
+          stroke="#8bbcff"
+          strokeWidth="10"
+        />
+        <circle cx="238" cy="204" r="7" fill="#c4dfff" strokeWidth="3" />
+        <path
+          d="M 225 166 L 233 177 L 227 185 L 217 174 Z"
+          fill="#5b98ed"
+          strokeWidth="3"
+        />
+        <path
+          d="M 219 176 Q 211 179 207 173 L 200 163 Q 197 158 201 155 Q 205 152 209 158 L 214 165 L 214 150 Q 214 144 220 144 Q 225 144 224 151 V 159 Q 235 156 236 163 Q 235 168 228 170 L 225 175 Z"
+          fill="#eef6ff"
+          strokeWidth="3.5"
+        />
+        <path d="M 221 165 L 228 163" fill="none" strokeWidth="2" />
+      </g>
+      <g className="learning-avatar__thought">
+        <circle cx="231" cy="88" r="4" fill="#fff4ce" strokeWidth="2" />
+        <circle cx="243" cy="74" r="6" fill="#fff4ce" strokeWidth="2" />
+        <path
+          d="M 264 27 Q 284 27 287 45 Q 299 59 282 66 H 261 Q 242 67 242 49 Q 241 31 264 27 Z"
+          fill="#fff4ce"
+          strokeWidth="3"
+        />
+        <path
+          d="M 260 42 Q 264 34 271 40 Q 278 47 267 52 V 55"
+          fill="none"
+          strokeWidth="3"
+        />
+        <circle cx="267" cy="61" r="1.5" fill="currentColor" stroke="none" />
+      </g>
+    </>
+  );
+}
+
 function Robot() {
   return (
-    <g stroke="currentColor" strokeWidth="5" strokeLinejoin="round">
+    <g
+      stroke="currentColor"
+      strokeWidth="4.5"
+      strokeLinejoin="round"
+      strokeLinecap="round"
+    >
+      {/* Boots and knees sit behind the printer, with a single limb per side. */}
       <path
-        d="M 121 240 L 116 271 L 96 271 Q 86 273 90 285 L 131 285 L 139 244 M 168 244 L 176 285 L 216 285 Q 220 273 209 271 L 190 271 L 186 240"
-        fill="#a8caff"
+        d="M 123 243 V 267 M 181 243 V 267"
+        stroke="#173465"
+        strokeWidth="20"
       />
       <path
-        d="M 94 193 Q 58 189 59 231 L 77 241 L 87 211 M 204 194 L 241 189"
+        d="M 123 247 V 268 M 181 247 V 268"
+        stroke="#9bc6ff"
+        strokeWidth="12"
+      />
+      <path
+        d="M 109 265 H 130 Q 136 265 136 273 V 281 H 96 Q 91 269 109 265 Z M 174 265 H 194 Q 212 269 208 281 H 168 V 273 Q 168 265 174 265 Z"
+        fill="#b8d7ff"
+      />
+      <path d="M 99 277 H 133 M 171 277 H 204" strokeWidth="3" />
+      <path
+        d="M 111 269 H 123 M 181 269 H 193"
+        stroke="#f0f7ff"
+        strokeWidth="3"
+      />
+      {/* Left arm: shoulder → elbow → cuff → mitten. */}
+      <path
+        d="M 102 203 Q 70 203 68 223 L 68 236"
         fill="none"
-        stroke="#8cb8ff"
-        strokeWidth="19"
-        strokeLinecap="round"
+        strokeWidth="18"
       />
-      <rect x="56" y="226" width="26" height="26" rx="10" fill="#e1eeff" />
-      <path d="M 105 184 H 191 L 199 242 Q 153 257 95 242 Z" fill="#76abff" />
+      <path
+        d="M 102 203 Q 70 203 68 223 L 68 236"
+        fill="none"
+        stroke="#8bbcff"
+        strokeWidth="10"
+      />
+      <circle cx="72" cy="216" r="7" fill="#c4dfff" strokeWidth="3" />
+      <rect
+        x="58"
+        y="230"
+        width="21"
+        height="10"
+        rx="4"
+        fill="#5b98ed"
+        strokeWidth="3"
+      />
+      <path
+        d="M 59 238 Q 54 242 56 250 Q 58 259 67 259 Q 78 259 80 251 L 81 245 Q 81 240 76 239 Q 73 239 72 245 L 72 240 Z"
+        fill="#eef6ff"
+        strokeWidth="3.5"
+      />
+      <path d="M 62 248 V 253 M 67 249 V 254" strokeWidth="2" />
+      {/* Swap the entire right arm; never layer an extra hand over a resting arm. */}
+      <g className="learning-avatar__resting-arm">
+        <path
+          d="M 205 203 Q 237 203 241 221 L 242 236"
+          fill="none"
+          strokeWidth="18"
+        />
+        <path
+          d="M 205 203 Q 237 203 241 221 L 242 236"
+          fill="none"
+          stroke="#8bbcff"
+          strokeWidth="10"
+        />
+        <circle cx="237" cy="216" r="7" fill="#c4dfff" strokeWidth="3" />
+        <rect
+          x="232"
+          y="230"
+          width="21"
+          height="10"
+          rx="4"
+          fill="#5b98ed"
+          strokeWidth="3"
+        />
+        <path
+          d="M 232 238 Q 226 240 228 246 L 230 252 Q 232 260 242 259 Q 251 259 254 250 Q 256 242 250 238 L 238 240 L 238 245 Q 236 238 232 238 Z"
+          fill="#eef6ff"
+          strokeWidth="3.5"
+        />
+        <path d="M 242 249 V 254 M 247 248 V 253" strokeWidth="2" />
+      </g>
+      <g className="learning-avatar__celebrating-arm">
+        <path
+          d="M 205 203 L 233 213 Q 249 215 251 197 L 251 183"
+          fill="none"
+          strokeWidth="18"
+        />
+        <path
+          d="M 205 203 L 233 213 Q 249 215 251 197 L 251 183"
+          fill="none"
+          stroke="#8bbcff"
+          strokeWidth="10"
+        />
+        <circle cx="236" cy="211" r="7" fill="#c4dfff" strokeWidth="3" />
+        <rect
+          x="241"
+          y="180"
+          width="22"
+          height="11"
+          rx="4"
+          fill="#5b98ed"
+          strokeWidth="3"
+        />
+        <path
+          d="M 240 180 L 237 162 Q 236 156 241 152 L 248 145 L 251 127 Q 252 121 258 123 Q 264 125 263 133 L 261 148 H 273 Q 282 149 280 157 L 276 175 Q 275 181 268 182 L 244 184 Z"
+          fill="#eef6ff"
+          strokeWidth="3.5"
+        />
+        <path
+          d="M 263 157 H 278 M 262 165 H 276 M 261 173 H 273 M 245 159 L 246 174"
+          fill="none"
+          strokeWidth="2.5"
+        />
+      </g>
+      {/* Rounded metal printer, inset front plate, status light, and ticket roller. */}
+      <rect x="98" y="175" width="110" height="80" rx="25" fill="#6faaff" />
+      <path
+        d="M 107 207 V 231 Q 107 246 121 247 H 187"
+        stroke="#abd0ff"
+        strokeWidth="5"
+        fill="none"
+      />
+      <rect
+        x="115"
+        y="196"
+        width="75"
+        height="43"
+        rx="12"
+        fill="#a8cfff"
+        strokeWidth="2.5"
+      />
+      <circle cx="196" cy="218" r="4" fill="#d2f79b" strokeWidth="2" />
+      <path d="M 193 230 H 199 M 193 234 H 199" strokeWidth="2" />
       <rect
         x="121"
         y="202"
-        width="51"
-        height="12"
-        rx="5"
-        fill="currentColor"
-        stroke="none"
+        width="63"
+        height="14"
+        rx="7"
+        fill="#173465"
+        strokeWidth="2"
       />
+      <path d="M 126 207 H 179" stroke="#527dac" strokeWidth="2" />
+      <g className="learning-avatar__ticket">
+        <path
+          d="M 131 211 H 173 V 254 L 168 251 L 163 255 L 158 251 L 153 255 L 148 251 L 143 255 L 138 251 L 131 254 Z"
+          fill="#ffe3a1"
+          strokeWidth="2.5"
+        />
+        <path
+          d="M 135 216 H 169 M 135 246 H 169"
+          stroke="#b98a39"
+          strokeWidth="1.5"
+          strokeDasharray="2 3"
+        />
+        <path
+          d="M 152 220 L 155 226 L 162 227 L 157 232 L 158 238 L 152 235 L 146 238 L 147 232 L 142 227 L 149 226 Z"
+          fill="#edac40"
+          strokeWidth="1.8"
+        />
+        <path
+          d="M 149 229 L 152 232 L 157 226"
+          stroke="#fff5dc"
+          strokeWidth="2"
+          fill="none"
+        />
+        <path
+          d="M 135 240 H 139 M 165 240 H 169"
+          stroke="#b98a39"
+          strokeWidth="1.5"
+        />
+      </g>
+      {/* A larger head, rounded ear pods, a warm antenna, and soft screen cheeks. */}
+      <path d="M 152 78 V 58" strokeWidth="6" />
+      <circle cx="152" cy="49" r="11" fill="#ffdb85" strokeWidth="3.5" />
+      <circle cx="149" cy="46" r="3" fill="#fff9dc" stroke="none" />
+      <rect x="69" y="119" width="27" height="42" rx="12" fill="#8abaff" />
+      <rect x="211" y="119" width="27" height="42" rx="12" fill="#8abaff" />
       <path
-        d="M 130 209 H 166 V 247 L 160 243 L 154 248 L 148 243 L 142 248 L 136 243 L 130 247 Z"
-        fill="#fff4be"
-        strokeWidth="3"
+        d="M 77 132 V 148 M 230 132 V 148"
+        stroke="#d9eaff"
+        strokeWidth="4"
       />
+      <rect x="82" y="76" width="142" height="119" rx="36" fill="#78afff" />
       <path
-        d="M 138 222 H 158 M 138 231 H 153"
-        strokeWidth="3"
-        strokeLinecap="round"
+        d="M 99 99 Q 103 88 118 87 H 178"
+        fill="none"
+        stroke="#dcecff"
+        strokeWidth="6"
       />
-      <path d="M 153 90 V 63" fill="none" />
-      <circle cx="153" cy="58" r="10" fill="#fff4be" />
-      <rect x="75" y="130" width="21" height="44" rx="9" fill="#76abff" />
-      <rect x="209" y="130" width="21" height="44" rx="9" fill="#76abff" />
-      <rect x="89" y="88" width="127" height="107" rx="30" fill="#76abff" />
       <rect
-        x="103"
-        y="104"
-        width="99"
-        height="77"
-        rx="23"
-        fill="#e1eeff"
+        x="95"
+        y="96"
+        width="116"
+        height="84"
+        rx="27"
+        fill="#eef7ff"
         strokeWidth="3"
       />
       <path
-        d="M 113 96 H 165"
-        stroke="#e1eeff"
-        strokeWidth="5"
-        strokeLinecap="round"
+        d="M 106 113 Q 109 105 119 105 H 180"
+        stroke="#fff"
+        strokeWidth="4"
+        fill="none"
       />
-      <Face x={153} y={137} />
-      <Thumb x={245} y={157} />
+      <g className="learning-avatar__eyes" stroke="none">
+        <rect x="121" y="120" width="15" height="25" rx="7.5" fill="#173465" />
+        <rect x="171" y="120" width="15" height="25" rx="7.5" fill="#173465" />
+        <ellipse cx="126" cy="126" rx="3" ry="4" fill="#fff" />
+        <ellipse cx="176" cy="126" rx="3" ry="4" fill="#fff" />
+      </g>
+      <g fill="#f7a79f" opacity=".7" stroke="none">
+        <ellipse cx="115" cy="151" rx="10" ry="5.5" />
+        <ellipse cx="191" cy="151" rx="10" ry="5.5" />
+      </g>
+      <path
+        className="learning-avatar__happy-mouth"
+        d="M 141 152 Q 153 168 166 152"
+        fill="#173465"
+        strokeWidth="3"
+      />
+      <path
+        className="learning-avatar__happy-mouth"
+        d="M 149 158 Q 154 155 160 158"
+        stroke="#fbafb0"
+        strokeWidth="3"
+      />
+      <path
+        className="learning-avatar__thinking-mouth"
+        d="M 146 156 Q 152 151 158 154"
+        fill="none"
+        strokeWidth="3"
+      />
+      <path d="M 145 182 H 162" stroke="#4d84d1" strokeWidth="2.5" />
+      <g fill="#cfe4ff" strokeWidth="1.8">
+        <circle cx="95" cy="179" r="3" />
+        <circle cx="211" cy="179" r="3" />
+      </g>
+      <RobotGesture />
     </g>
   );
 }
@@ -288,7 +603,7 @@ function Pencil() {
   );
 }
 
-/** Original SVG companion; mood="celebrate" reveals a positive thumbs-up pose. */
+/** Original SVG companion. Each robot gesture replaces its complete right arm. */
 export function LearningAvatar({
   character = "robot",
   size = 320,
@@ -305,7 +620,7 @@ export function LearningAvatar({
       height={size}
       viewBox="0 0 320 320"
       role="img"
-      aria-label={`${companions[character].name}${mood === "celebrate" ? " giving a thumbs-up" : mood === "blink" ? " blinking" : " smiling"}`}
+      aria-label={`${companions[character].name} ${{ idle: "smiling", blink: "blinking", celebrate: "giving a thumbs-up", greeting: "waving hello", thinking: "thinking about a clue", printing: "printing earned tickets" }[mood]}`}
     >
       <ellipse
         cx="157"
@@ -355,16 +670,16 @@ export default function AvatarLab() {
     },
     [],
   );
-  const perform = (next: AvatarMood) => {
+  const perform = (next: AvatarMood, speaker: AvatarCharacter = character) => {
     if (timer.current) clearTimeout(timer.current);
     setEvent((value) => value + 1);
     setMood(next);
     setStatus(
-      `${companions[character].name} ${next === "blink" ? "blinked." : "gives you a thumbs-up!"}`,
+      `${companions[speaker].name}: ${tickPoses.find((pose) => pose.mood === next)?.line ?? "Ready when you are."}`,
     );
     timer.current = setTimeout(
       () => setMood("idle"),
-      next === "blink" ? 700 : 2200,
+      next === "blink" ? 700 : 3000,
     );
   };
   const choose = (next: AvatarCharacter) => {
@@ -387,8 +702,8 @@ export default function AvatarLab() {
           <br />A lot of personality.
         </h2>
         <p>
-          Three original directions to try. Friendly enough for Ezra, with
-          enough attitude for Aharon Zev.
+          Meet Tick, our ticket-printing companion. He cheers you on, helps you
+          think, and prints your hard-earned tickets.
         </p>
       </div>
       <div className="avatar-lab__workbench">
@@ -405,23 +720,30 @@ export default function AvatarLab() {
           <span className="avatar-lab__stage-caption">{current.role}</span>
         </div>
         <div className="avatar-lab__details">
-          <div
-            className="avatar-lab__choices"
-            role="group"
-            aria-label="Choose a companion"
-          >
-            {(Object.keys(companions) as AvatarCharacter[]).map((key) => (
-              <button
-                key={key}
-                type="button"
-                aria-pressed={character === key}
-                onClick={() => choose(key)}
-              >
-                <LearningAvatar character={key} size={88} />
-                <span>{companions[key].name}</span>
-              </button>
-            ))}
-          </div>
+          <details className="avatar-lab__customize">
+            <summary>Explore optional companions</summary>
+            <div
+              className="avatar-lab__choices"
+              role="group"
+              aria-label="Choose an optional companion preview"
+            >
+              {(Object.keys(companions) as AvatarCharacter[]).map((key) => (
+                <button
+                  key={key}
+                  type="button"
+                  aria-pressed={character === key}
+                  onClick={() => choose(key)}
+                >
+                  <LearningAvatar character={key} size={88} />
+                  <span>{companions[key].name}</span>
+                </button>
+              ))}
+            </div>
+            <p>
+              Orbit and Scrib can become choices when kids customize their
+              companion. Tick is the default.
+            </p>
+          </details>
           <h3>{current.name}</h3>
           <p className="avatar-lab__description">{current.description}</p>
           <div className="avatar-lab__actions">
@@ -431,6 +753,19 @@ export default function AvatarLab() {
             <button type="button" onClick={() => perform("celebrate")}>
               Give a thumbs-up
             </button>
+            {character === "robot" && (
+              <>
+                <button type="button" onClick={() => perform("greeting")}>
+                  Wave hello
+                </button>
+                <button type="button" onClick={() => perform("thinking")}>
+                  Find a clue
+                </button>
+                <button type="button" onClick={() => perform("printing")}>
+                  Print a ticket
+                </button>
+              </>
+            )}
           </div>
           <p className="avatar-lab__motion-note">
             Small reactions for big moments. No bouncing while you’re trying to
@@ -444,8 +779,47 @@ export default function AvatarLab() {
             Download {current.name} as SVG <span aria-hidden="true">↓</span>
           </a>
           <p className="avatar-lab__live" role="status" aria-live="polite">
-            {status || "Choose a companion, then try a reaction."}
+            {status || "Tick is our companion. Try a blink or a thumbs-up."}
           </p>
+        </div>
+      </div>
+      <div
+        className="avatar-lab__character-sheet"
+        aria-labelledby="tick-character-sheet-title"
+      >
+        <div className="avatar-lab__sheet-heading">
+          <div>
+            <p className="avatar-lab__chapter">Tick’s character sheet</p>
+            <h3 id="tick-character-sheet-title">
+              One companion. Six little moments.
+            </h3>
+          </div>
+          <p>
+            A friendly reaction for each part of the journey. Tap a pose to try
+            it on the big stage.
+          </p>
+        </div>
+        <div className="avatar-lab__pose-grid">
+          {tickPoses.map((pose, index) => (
+            <button
+              type="button"
+              className={`avatar-lab__pose avatar-lab__pose--${pose.mood}`}
+              key={pose.mood}
+              onClick={() => {
+                choose("robot");
+                perform(pose.mood, "robot");
+              }}
+            >
+              <span className="avatar-lab__pose-number">
+                0{index + 1} /{" "}
+                {pose.mood === "celebrate" ? "thumbs-up" : pose.mood}
+              </span>
+              <LearningAvatar character="robot" mood={pose.mood} size={230} />
+              <strong>{pose.title}</strong>
+              <span className="avatar-lab__pose-line">“{pose.line}”</span>
+              <span className="avatar-lab__pose-use">{pose.use}</span>
+            </button>
+          ))}
         </div>
       </div>
       <div className="avatar-lab__notes">

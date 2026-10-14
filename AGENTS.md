@@ -7,3 +7,9 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## Learning Club product decisions
+
+Read `PROJECT-SYNOPSIS.md` for the current deployment, canonical folder, implementation map and handoff status. It distinguishes current production behavior from historical prototype notes.
+
+Read `PRODUCT.md` before changing curriculum, progression, child UX, rewards, or visual design. It records the latest parent feedback and supersedes earlier prototype terminology. Preserve existing learning and purchase records when content versions change. The child-facing hierarchy is weekly plan → daily lesson → chunks.

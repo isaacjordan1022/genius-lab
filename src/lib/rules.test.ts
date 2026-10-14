@@ -55,10 +55,12 @@ test("public assessment does not leak answer keys or model answers", () => {
     correct: "b",
     explanation: "the answer is b",
     exemplar: "b",
+    rubric: ["Must answer b"],
     points: 4,
     objective: "inference",
   };
   const safe = publicQuestion(q);
+  assert.equal("rubric" in safe, false);
   assert.equal("correct" in safe, false);
   assert.equal("explanation" in safe, false);
   assert.equal("exemplar" in safe, false);

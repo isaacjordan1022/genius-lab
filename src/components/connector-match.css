@@ -1,0 +1,289 @@
+.connector-match {
+  font-family: LearningLexend, Lexend, sans-serif;
+  margin: 20px 0;
+  color: #35264f;
+  padding: 22px;
+  border: 2px solid #c6b6dc;
+  border-radius: 20px;
+  background-color: #f6f1fc;
+  background-image: none;
+  min-width: 0;
+}
+.connector-instructions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+.connector-instructions strong {
+  font:
+    500 22px/1.2 LearningDynaPuff,
+    DynaPuff,
+    sans-serif;
+  color: #4b2374;
+}
+.connector-instructions p {
+  font-size: 18px;
+  line-height: 1.6;
+  margin: 8px 0 0;
+  max-width: 48ch;
+  color: #655377;
+}
+.connector-count {
+  font:
+    500 24px LearningDynaPuff,
+    DynaPuff,
+    sans-serif;
+  background: #4b2374;
+  color: #f0dfff;
+  text-align: center;
+  border: 2px solid #351457;
+  border-radius: 15px;
+  min-width: 83px;
+  padding: 9px 11px;
+  box-shadow: 0 3px 0 #351457;
+  flex-shrink: 0;
+}
+.connector-count small {
+  display: block;
+  font:
+    400 18px LearningLexend,
+    Lexend,
+    sans-serif;
+  margin-top: 5px;
+  color: inherit;
+}
+.connector-board {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: 76px;
+  align-items: start;
+}
+.connector-column {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  min-width: 0;
+  z-index: 1;
+}
+.connector-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 2;
+}
+.connector-lines path {
+  fill: none;
+  stroke-width: 3.5;
+  stroke-linecap: round;
+}
+.connector-lines path.connector-line-halo {
+  stroke: #f6f1fc;
+  stroke-width: 8;
+}
+.connector-lines path.connector-drag-line {
+  stroke: #69438b;
+  stroke-dasharray: 6 6;
+  stroke-width: 3;
+}
+.connector-match button.connector-card {
+  position: relative;
+  min-height: 76px;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  justify-content: flex-start;
+  text-align: left;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  font:
+    500 18px/1.55 LearningLexend,
+    Lexend,
+    sans-serif;
+  padding: 14px;
+  border: 2px solid #b6a7ca;
+  border-radius: 13px;
+  background: #fff;
+  color: #3e3052;
+  box-shadow: 0 4px 0 #d7cce6;
+  transition: background 0.15s;
+  isolation: isolate;
+}
+.connector-match button.connector-card:hover:not(:disabled) {
+  transform: none;
+  background: #ede3fa;
+  border-color: #704999;
+}
+.connector-match button.connector-card:active:not(:disabled) {
+  transform: none;
+}
+.connector-match button.connector-card.is-connected {
+  border-color: var(--connector-color);
+  background: #fff;
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--connector-color) 32%, white);
+}
+.connector-match button.connector-card.is-selected {
+  background: #e7d4ff;
+  border: 2px solid #4b2374;
+  box-shadow:
+    0 0 0 3px #c4a5e9,
+    0 4px 0 #4b2374;
+}
+.connector-left {
+  touch-action: none;
+  cursor: grab;
+}
+.connector-left:active {
+  cursor: grabbing;
+}
+.connector-badge {
+  display: grid;
+  place-items: center;
+  flex: 0 0 22px;
+  width: 22px;
+  height: 22px;
+  font:
+    600 18px LearningLexend,
+    Lexend,
+    sans-serif;
+  background: var(--connector-color);
+  color: #fff;
+  border-radius: 7px;
+}
+.connector-port {
+  position: absolute;
+  width: 11px;
+  height: 11px;
+  border: 2px solid var(--connector-color);
+  background: #fff;
+  border-radius: 50%;
+  top: calc(50% - 5.5px);
+  z-index: 3;
+}
+.connector-left .connector-port {
+  right: -6px;
+}
+.connector-right .connector-port {
+  left: -6px;
+}
+.connector-right .connector-badge {
+  margin-left: auto;
+}
+.connector-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-top: 23px;
+  min-height: 36px;
+}
+.connector-footer p {
+  font-size: 18px;
+  color: #655377;
+  margin: 0;
+  max-width: 42ch;
+  line-height: 1.6;
+}
+.connector-footer > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  flex-shrink: 0;
+}
+.connector-footer button {
+  font:
+    500 18px LearningLexend,
+    Lexend,
+    sans-serif;
+  padding: 7px 9px;
+  background: #fff;
+  color: #4b2374;
+  border: 1px solid #c6b6dc;
+  border-radius: 8px;
+  box-shadow: 0 2px 0 #d7cce6;
+}
+.connector-match button:focus-visible {
+  outline: 3px solid #e28b00;
+  outline-offset: 4px;
+}
+.connector-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+@media (max-width: 650px) {
+  .connector-match {
+    padding: 15px 12px;
+  }
+  .connector-board {
+    column-gap: 42px;
+  }
+  .connector-match button.connector-card {
+    font-size: 18px;
+    line-height: 1.5;
+    padding: 10px 8px;
+    gap: 6px;
+    min-height: 88px;
+  }
+  .connector-instructions strong {
+    font-size: 19px;
+  }
+  .connector-instructions p {
+    font-size: 18px;
+  }
+  .connector-count {
+    min-width: 65px;
+    font-size: 20px;
+    padding: 9px;
+  }
+  .connector-instructions {
+    gap: 10px;
+  }
+  .connector-badge {
+    width: 18px;
+    height: 18px;
+    flex-basis: 18px;
+    font-size: 18px;
+    border-radius: 5px;
+  }
+  .connector-footer {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .connector-footer > div {
+    flex-wrap: wrap;
+  }
+  .connector-column {
+    gap: 12px;
+  }
+}
+@media (max-width: 380px) {
+  .connector-board {
+    column-gap: 30px;
+  }
+  .connector-match button.connector-card {
+    font-size: 18px;
+    gap: 5px;
+    padding: 9px 6px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .connector-match button {
+    transition: none;
+    transform: none !important;
+  }
+}

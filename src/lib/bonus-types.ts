@@ -1,0 +1,33 @@
+import type { Answer, Question, TeachingBlock } from "./content-types";
+import type { AIGrade } from "./learning-ai";
+import type { assessmentResult } from "./rules";
+export type BonusRecord = {
+  id: string;
+  week: string;
+  attemptId: string;
+  chunkId: string;
+  lessonId: string;
+  title: string;
+  question: Question;
+  teaching: TeachingBlock[];
+  model: string;
+  createdAt: string;
+  answer?: Answer;
+  submittedAt?: string;
+  grade?: AIGrade;
+  error?: string;
+  ticketsEarned: number;
+};
+export type BonusTest = {
+  id: string;
+  week: string;
+  createdAt: string;
+  bonusIds: string[];
+  questions: Question[];
+  answers: Record<string, Answer>;
+  grades: Record<string, AIGrade>;
+  submittedAt?: string;
+  result?: ReturnType<typeof assessmentResult>;
+  error?: string;
+  ticketsEarned: number;
+};

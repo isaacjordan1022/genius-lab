@@ -1,0 +1,605 @@
+@font-face {
+  font-family: LearningDynaPuff;
+  src: url("/design/fonts/dynapuff-DynaPuff-wdth-wght.ttf") format("truetype");
+  font-weight: 400 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: LearningLexend;
+  src: url("/design/fonts/lexend-Lexend-wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-display: swap;
+}
+.teaching-cards {
+  font-family: LearningLexend, Lexend, sans-serif;
+  margin: 20px 0 26px;
+  max-width: 100%;
+  min-width: 0;
+}
+.teach-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.teach-tabs button {
+  font:
+    600 18px/1.4 LearningLexend,
+    sans-serif;
+  text-align: left;
+  padding: 9px 12px;
+  border: 2px solid #ddd4f1;
+  box-shadow: none;
+  background: #fbf8ff;
+  color: #4b2d7c;
+  border-radius: 13px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.teach-tabs button[aria-pressed="true"] {
+  background: #4b2d7c;
+  color: #f3eaff;
+  border-color: #4b2d7c;
+  box-shadow: 0 3px 0 #2f1757;
+}
+.teach-tabs button span {
+  background: #ffffff25;
+  border: 1px solid currentColor;
+  display: grid;
+  place-items: center;
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+.teach-card {
+  --teach-deep: #194e87;
+  --teach-light: #e3f2ff;
+  --teach-paper: #f8fcff;
+  overflow: hidden;
+  border: 2px solid var(--teach-deep);
+  border-radius: 22px;
+  background: var(--teach-light);
+  box-shadow: 0 6px 0 var(--teach-deep);
+  color: var(--teach-deep);
+}
+.teach-vocabulary {
+  --teach-deep: #4b2374;
+  --teach-light: #edddff;
+  --teach-paper: #faf4ff;
+}
+.teach-concept {
+  --teach-deep: #075c54;
+  --teach-light: #d8f5e8;
+  --teach-paper: #f2fff8;
+}
+.teach-example {
+  --teach-deep: #843512;
+  --teach-light: #ffe8c9;
+  --teach-paper: #fff9ef;
+}
+.teach-art {
+  --teach-deep: #7b2250;
+  --teach-light: #ffe0ee;
+  --teach-paper: #fff8fc;
+}
+.teach-mechanism {
+  --teach-deep: #7c2d12;
+  --teach-light: #ffedd5;
+  --teach-paper: #fffaf5;
+}
+.teach-torah {
+  --teach-deep: #1e3a8a;
+  --teach-light: #dbeafe;
+  --teach-paper: #f8fafc;
+}
+.teach-gadol {
+  --teach-deep: #312e81;
+  --teach-light: #e0e7ff;
+  --teach-paper: #f8faff;
+}
+.teach-halacha {
+  --teach-deep: #065f46;
+  --teach-light: #d1fae5;
+  --teach-paper: #f4fdf9;
+}
+.teach-card-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--teach-deep);
+  color: var(--teach-light);
+  padding: 22px 26px;
+}
+.teach-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  border-radius: 15px;
+  background: var(--teach-light);
+  color: var(--teach-deep);
+  box-shadow: inset 0 -4px 0 #00000013;
+}
+.teach-card-heading h3 {
+  font:
+    500 clamp(20px, 2.8vw, 27px)/1.25 LearningDynaPuff,
+    DynaPuff,
+    sans-serif;
+  letter-spacing: -0.5px;
+  margin: 5px 0 0;
+  color: inherit;
+}
+.teach-kind {
+  font-size: 18px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+.teach-sheet {
+  margin: 20px;
+  padding: 25px 28px;
+  background-color: var(--teach-paper);
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--teach-deep) 22%, transparent);
+  color: #242a3b;
+  font-size: 18px;
+  line-height: 1.95;
+}
+.teach-sheet p,
+.teach-intro p {
+  max-width: 64ch;
+  margin: 0 0 1.2em;
+}
+.teach-sheet p:last-child,
+.teach-intro p:last-child {
+  margin-bottom: 0;
+}
+.teach-passage-sheet {
+  border-left: 5px solid var(--teach-deep);
+  background-image: none;
+}
+.teach-sheet mark,
+.teach-intro mark {
+  background: #ffe18c;
+  color: #452f0b;
+  padding: 1px 4px;
+  border-radius: 4px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  font-weight: 650;
+}
+.teach-intro {
+  padding: 20px 24px 0;
+  font-size: 18px;
+  line-height: 1.8;
+}
+.teach-words {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 14px;
+  padding: 20px;
+}
+.teach-word {
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
+  flex-direction: column;
+  text-align: left;
+  gap: 0;
+  padding: 20px;
+  min-height: 220px;
+  box-shadow: 0 4px 0 #28103e;
+  border: 2px solid #28103e;
+  border-radius: 17px;
+  color: #f7edff;
+  background: #683795;
+  transition: transform 0.15s;
+  white-space: normal;
+}
+.teach-word:hover:not(:disabled) {
+  background: #74429f;
+  color: #fff;
+}
+.teach-word.is-revealed,
+.teach-word.is-revealed:hover {
+  background: #fff9ff;
+  color: #4b2374;
+}
+.teach-word-top {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  font-size: 18px;
+  font-weight: 500;
+}
+.teach-word-top span {
+  flex: 1;
+}
+.teach-word strong {
+  display: block;
+  font:
+    500 clamp(24px, 3vw, 32px)/1.2 LearningDynaPuff,
+    sans-serif;
+  margin: 20px 0 15px;
+  overflow-wrap: anywhere;
+}
+.teach-word-prompt {
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 1.6;
+  max-width: 24ch;
+}
+.teach-word-back {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  font-size: 18px;
+  line-height: 1.7;
+  font-weight: 450;
+}
+.teach-word-example {
+  border-top: 2px dashed #cbb4df;
+  padding-top: 12px;
+  color: #523b64;
+  font-size: 18px;
+}
+.teach-notice {
+  padding: 0 20px 20px;
+}
+.teach-notice button {
+  background: var(--teach-paper);
+  color: var(--teach-deep);
+  border: 2px solid var(--teach-deep);
+  font:
+    600 18px/1.4 LearningLexend,
+    sans-serif;
+  box-shadow: 0 3px 0 var(--teach-deep);
+}
+.teach-notice button:hover:not(:disabled) {
+  background: white;
+}
+.teach-notice p {
+  font-size: 18px;
+  line-height: 1.8;
+  max-width: 58ch;
+  margin: 17px 5px 0;
+}
+.teach-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 20px;
+  font-size: 18px;
+  color: #5a5570;
+}
+.teach-pagination button {
+  font:
+    600 18px LearningLexend,
+    sans-serif;
+  color: #4b2374;
+  border-color: #b7a0ce;
+  background: #f6efff;
+  box-shadow: 0 3px 0 #d0bddf;
+}
+.teaching-cards button:focus-visible {
+  outline: 3px solid #e28b00;
+  outline-offset: 4px;
+}
+.teaching-compact .teach-card-heading {
+  padding: 15px 19px;
+}
+.teaching-compact .teach-sheet {
+  font-size: 18px;
+  padding: 18px;
+}
+@media (max-width: 600px) {
+  .teach-card-heading {
+    padding: 18px;
+    gap: 10px;
+  }
+  .teach-icon {
+    width: 40px;
+    height: 40px;
+    flex-basis: 40px;
+  }
+  .teach-sheet {
+    margin: 12px;
+    padding: 18px;
+    font-size: 18px;
+    line-height: 1.85;
+  }
+  .teach-tabs {
+    gap: 6px;
+  }
+  .teach-tabs button {
+    font-size: 18px;
+    flex: 1 1 140px;
+    padding: 8px;
+  }
+  .teach-words {
+    padding: 13px;
+    gap: 12px;
+  }
+  .teach-intro {
+    padding: 17px 18px 0;
+  }
+  .teach-word {
+    min-height: 185px;
+  }
+  .teach-word-top {
+    font-size: 18px;
+  }
+  .teach-card-heading h3 {
+    font-size: 21px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .teaching-cards button {
+    transition: none;
+    transform: none !important;
+  }
+}
+
+/* Teaching v3: reading paper and an equal-whole math workbench. */
+.teach-paragraph {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 14px;
+  margin: 0 0 1.4em;
+  border-radius: 10px;
+  padding: 8px 10px 8px 0;
+}
+.teach-paragraph:last-child {
+  margin-bottom: 0;
+}
+.teach-paragraph p {
+  margin: 0;
+  max-width: 62ch;
+}
+.teach-paragraph.is-evidence {
+  background: #fff0b6;
+  box-shadow: inset 4px 0 #ba7700;
+}
+.teaching-cards .teach-paragraph-marker {
+  align-self: start;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  min-height: 44px;
+  border: 1px solid #adc6df;
+  box-shadow: none;
+  border-radius: 12px;
+  background: #e7f2ff;
+  color: #194e87;
+  font:
+    500 18px/1 LearningLexend,
+    sans-serif;
+}
+.teaching-cards .teach-paragraph-marker:hover {
+  background: #d4e7ff;
+  color: #133e6b;
+}
+.teaching-cards .teach-paragraph-marker[aria-pressed="true"] {
+  background: #194e87;
+  color: #fff;
+  border-color: #194e87;
+}
+.fraction-workshop {
+  margin: 20px;
+  padding: clamp(18px, 3vw, 30px);
+  background: #fff;
+  color: #143c37;
+  border: 2px solid #97cdbb;
+  border-radius: 18px;
+  font-size: 18px;
+  line-height: 1.6;
+}
+.fraction-worktop {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 24px;
+}
+.fraction-worktop strong,
+.fraction-steps h4 {
+  font:
+    500 clamp(22px, 3vw, 28px)/1.3 LearningDynaPuff,
+    sans-serif;
+  color: #075c54;
+}
+.fraction-row {
+  margin: 20px 0;
+}
+.fraction-row-label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 20px;
+  margin-bottom: 8px;
+  font-size: 18px;
+}
+.fraction-row-label strong {
+  font-size: 22px;
+}
+.fraction-bar {
+  display: grid;
+  height: 60px;
+  width: 100%;
+  border: 2px solid #075c54;
+  border-radius: 9px;
+  overflow: hidden;
+  background: #f2faf7;
+}
+.fraction-bar > span {
+  border-right: 1px solid #075c54;
+  position: relative;
+}
+.fraction-bar > span:last-child {
+  border-right: 0;
+}
+.fraction-bar .is-filled {
+  background: #147e70;
+  box-shadow: inset 0 5px #ffffff20;
+}
+.fraction-bar .is-added {
+  background: #ffc45c;
+}
+.fraction-bar .is-removed {
+  background: #d7e7e1;
+}
+.fraction-bar .is-removed::after {
+  content: "";
+  position: absolute;
+  inset: 4px 0;
+  background: linear-gradient(
+    125deg,
+    transparent 44%,
+    #9b3626 46%,
+    #9b3626 52%,
+    transparent 54%
+  );
+}
+.fraction-controls {
+  border: 0;
+  padding: 0;
+  margin: 24px 0 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.fraction-controls legend {
+  margin-bottom: 12px;
+  font-size: 18px;
+}
+.teaching-cards .fraction-workshop button {
+  font:
+    500 18px/1.45 LearningLexend,
+    sans-serif;
+  background: #e6f6ed;
+  color: #075c54;
+  border: 2px solid #075c54;
+  border-radius: 12px;
+  padding: 11px 15px;
+  box-shadow: 0 3px 0 #075c54;
+  white-space: normal;
+}
+.teaching-cards .fraction-workshop button:hover {
+  background: #d2eddf;
+  color: #063f39;
+}
+.teaching-cards .fraction-workshop button[aria-pressed="true"] {
+  background: #075c54;
+  color: #f0fff6;
+}
+.fraction-insight {
+  background: #e9f6ef;
+  padding: 16px 20px;
+  border-left: 5px solid #147e70;
+  border-radius: 4px 12px 12px 4px;
+  font-size: 18px;
+  line-height: 1.7;
+  margin: 22px 0;
+}
+.fraction-groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 14px;
+  margin: 20px 0;
+}
+.teaching-cards .fraction-groups button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 10px;
+  box-shadow: none;
+}
+.fraction-groups strong {
+  font-size: 18px;
+  font-weight: 500;
+}
+.fraction-dots {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  min-height: 58px;
+  align-content: center;
+  max-width: 115px;
+}
+.fraction-dots i {
+  width: 22px;
+  height: 22px;
+  background: #147e70;
+  border: 2px solid #075c54;
+  border-radius: 50%;
+  box-shadow: inset 2px 3px #ffffff50;
+}
+.fraction-groups .is-selected .fraction-dots i {
+  background: #ffdc83;
+  border-color: #ffdc83;
+}
+.fraction-steps {
+  margin-top: 30px;
+  border-top: 2px dashed #acd5c7;
+  padding-top: 20px;
+}
+.fraction-steps h4 {
+  margin: 0 0 18px;
+}
+.fraction-steps ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.fraction-steps li {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.fraction-steps li > span {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #075c54;
+  color: white;
+  font-size: 18px;
+}
+.fraction-steps p {
+  margin: 0;
+  font-size: 18px;
+}
+@media (max-width: 600px) {
+  .teach-paragraph {
+    grid-template-columns: 32px minmax(0, 1fr);
+    gap: 9px;
+    padding-right: 0;
+  }
+  .teaching-cards .teach-paragraph-marker {
+    width: 32px;
+  }
+  .teach-passage-sheet {
+    padding: 15px 12px;
+  }
+  .fraction-workshop {
+    margin: 12px;
+    padding: 16px;
+  }
+  .fraction-row-label {
+    flex-direction: column;
+    gap: 2px;
+  }
+  .fraction-groups {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .fraction-bar {
+    height: 54px;
+  }
+}

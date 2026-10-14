@@ -1,3 +1,7 @@
+# Current iteration: guided daily lessons
+
+Read `PRODUCT.md` first. It supersedes the original chunk terminology below. Current work: weekly plan → five daily lessons plus a test → 2–4 short teach/activity chunks per lesson; colorful teaching cards, line matching, more open reasoning, persistent ticket wallet, clear back navigation and versioned content preserving earlier attempts.
+
 # First playable build
 
 The user approved five daily chunks and a weekly test, and authorized building alongside a separate design exploration on October 7, 2026.

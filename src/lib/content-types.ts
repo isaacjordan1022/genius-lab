@@ -1,3 +1,18 @@
+export type DiagramKind =
+  | "beam-bridge"
+  | "shadow-theatre"
+  | "mondrian-study"
+  | "leather-tanning-lab"
+  | "hide-layers-explorer"
+  | "glove-anatomy-lab"
+  | "glove-breakin-simulator"
+  | "baseball-seam-windtunnel"
+  | "teivah-blueprint-explorer"
+  | "salanter-storybook"
+  | "shabbos-borer-lab"
+  | "noach-window-timeline"
+  | "shabbos-muktzeh-explorer";
+
 export type Question = {
   id: string;
   kind: "choice" | "match" | "open";
@@ -11,7 +26,33 @@ export type Question = {
   objective: string;
   points: 4;
 };
-export type TeachingBlock = { title: string; text: string };
+export type TeachingBlock = {
+  diagram?: DiagramKind;
+  fractionModel?: {
+    mode: "equivalence" | "compare" | "add" | "subtract" | "quantity";
+    numerator: number;
+    denominator: number;
+    otherNumerator?: number;
+    otherDenominator?: number;
+    total?: number;
+    steps: string[];
+  };
+  sources?: { label: string; url: string }[];
+  title: string;
+  text: string;
+  kind?:
+    | "vocabulary"
+    | "passage"
+    | "concept"
+    | "example"
+    | "art"
+    | "mechanism"
+    | "torah"
+    | "gadol"
+    | "halacha";
+  terms?: { word: string; meaning: string; example: string }[];
+  highlight?: string[];
+};
 export type Chunk = {
   id: string;
   order: number;
@@ -28,4 +69,18 @@ export type PublicQuestion = Omit<
 > & {
   left?: string[];
   right?: string[];
+};
+
+export type LearningChunk = {
+  id: string;
+  title: string;
+  subjects: string[];
+  objectives: string[];
+  teaching: TeachingBlock[];
+  questionIds: string[][];
+};
+export type DailyLesson = Chunk & {
+  version: 2 | 3 | 4;
+  assessmentOnly?: boolean;
+  chunks: LearningChunk[];
 };

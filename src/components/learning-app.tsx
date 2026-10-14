@@ -3,7 +3,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   BookOpen,
-  Blocks,
   Flag,
   Gamepad2,
   Gift,
@@ -12,31 +11,44 @@ import {
   Palette,
   Ticket,
   Trophy,
-  Utensils,
-  Volume2,
   Check,
   ArrowRight,
   Mic,
   RefreshCw,
+  LogOut,
 } from "lucide-react";
+import { topicEmoji, simpleTopics } from "@/lib/week-plan";
 import type { AppState } from "@/lib/store";
 import type { Answer, PublicQuestion } from "@/lib/content-types";
 import GameRoom from "./games";
+import LessonPlayer from "./lesson-player";
+import ReadAlong from "./read-along";
+import { WeeklyBonusTest } from "./bonus-learning";
+import ConnectorMatch from "./connector-match";
+import PrizeRoom from "./prize-room";
+import { LearningAvatar } from "./avatar-lab";
+import TicketDisplay from "./ticket-display";
+import TicketWallet from "./ticket-wallet";
+import GeniusLogo from "./genius-logo";
+import "./app-skin.css";
+import "./mission-shell.css";
 
 type Screen =
   "home" | "week" | "lesson" | "mission" | "arcade" | "prizes" | "scores";
 const NAV = [
   ["home", "Dashboard", House],
-  ["week", "This week's lesson", BookOpen],
+  ["week", "Weekly plan", BookOpen],
   ["mission", "Daily mission", Flag],
   ["arcade", "Open play", Gamepad2],
-  ["prizes", "Prize shelf", Gift],
+  ["prizes", "Prize Room", Gift],
   ["scores", "Scores & family", Trophy],
 ] as const;
 const number = (n: number) => n.toLocaleString();
-export default function LearningApp() {
+export default function LearningApp({
+  initialScreen = "home",
+}: { initialScreen?: Screen } = {}) {
   const [data, setData] = useState<AppState | null>(null),
-    [screen, setScreen] = useState<Screen>("home"),
+    [screen, setScreen] = useState<Screen>(initialScreen),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false),
     [committing, setCommitting] = useState(false),
@@ -46,21 +58,12 @@ export default function LearningApp() {
       answer: Answer;
     }>({ questionId: "", answer: "" }),
     [saveStatus, setSaveStatus] = useState(""),
-    [checkout, setCheckout] = useState<{
-      id: string;
-      cost: number;
-      title: string;
-      key: string;
-    } | null>(null),
     [game, setGame] = useState<"snake" | "match" | "rally" | null>(null);
-  const checkoutDialog = useRef<HTMLDialogElement>(null);
   useEffect(() => {
-    const dialog = checkoutDialog.current;
-    if (checkout && dialog) {
-      dialog.showModal();
-      return () => dialog.close();
-    }
-  }, [checkout]);
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [screen]);
+  const lessonLeaveGuard = useRef<null | (() => Promise<boolean>)>(null);
+  const [preview, setPreview] = useState(false);
   const current = useRef<AppState | null>(null),
     queue = useRef<Promise<unknown>>(Promise.resolve());
   const update = useCallback((s: AppState) => {
@@ -87,12 +90,18 @@ export default function LearningApp() {
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
                 ...body,
-                ...(body.action === "save"
+                ...(["save", "restartQuiz"].includes(String(body.action))
                   ? { revision: current.current?.revision }
                   : {}),
               }),
             }),
             json = await r.json();
+          if (r.status === 401) {
+            current.current = null;
+            setData(null);
+            window.location.replace("/login");
+            return null;
+          }
           if (!r.ok) throw new Error(json.error);
           update(json);
           return json as AppState;
@@ -138,6 +147,7 @@ export default function LearningApp() {
   useEffect(() => {
     if (
       screen !== "lesson" ||
+      (a?.contentVersion ?? 1) >= 2 ||
       !a?.taught ||
       a.submittedAt ||
       !q ||
@@ -174,7 +184,15 @@ export default function LearningApp() {
     act,
   ]);
   async function start(chunkId: string) {
-    const state = await act({ action: "start", chunkId });
+    if (lessonLeaveGuard.current && !(await lessonLeaveGuard.current())) return;
+    const existing = data?.attempts
+      .filter((at) => at.chunkId === chunkId)
+      .at(-1);
+    const state = await act(
+      existing
+        ? { action: "resume", attemptId: existing.id }
+        : { action: "start", chunkId },
+    );
     if (state) {
       setQuestionIndex(
         Math.max(
@@ -226,6 +244,7 @@ export default function LearningApp() {
   async function persistDraft() {
     if (
       screen === "lesson" &&
+      (a?.contentVersion ?? 1) < 2 &&
       a?.taught &&
       !a.submittedAt &&
       q &&
@@ -244,6 +263,8 @@ export default function LearningApp() {
     if (committing) return;
     setCommitting(true);
     try {
+      if (lessonLeaveGuard.current && !(await lessonLeaveGuard.current()))
+        return;
       if (!(await persistDraft())) return;
       setError("");
       setGame(null);
@@ -261,9 +282,37 @@ export default function LearningApp() {
       setCommitting(false);
     }
   }
+  async function signOut() {
+    if (busy || committing) return;
+    if (lessonLeaveGuard.current && !(await lessonLeaveGuard.current())) return;
+    if (!(await persistDraft())) return;
+    await queue.current;
+    setCommitting(true);
+    try {
+      const response = await fetch("/api/auth/logout", { method: "POST" });
+      if (!response.ok)
+        throw new Error("Could not sign out. Please try again.");
+      current.current = null;
+      setData(null);
+      window.location.replace("/login");
+    } catch (e) {
+      setError(
+        e instanceof Error
+          ? e.message
+          : "Could not sign out. Please try again.",
+      );
+      setCommitting(false);
+    }
+  }
   async function refresh() {
     try {
       const r = await fetch("/api/state", { cache: "no-store" });
+      if (r.status === 401) {
+        current.current = null;
+        setData(null);
+        window.location.replace("/login");
+        return;
+      }
       if (!r.ok) throw new Error("Could not refresh.");
       update(await r.json());
     } catch (e) {
@@ -273,8 +322,8 @@ export default function LearningApp() {
   if (!data)
     return (
       <main className="loading">
-        <div className="logo-stamp">L</div>
-        <h1>Opening your learning club…</h1>
+        <GeniusLogo className="genius-loading-logo" />
+        <h1>Opening your lab…</h1>
         {error && (
           <>
             <p role="alert">{error}</p>
@@ -285,41 +334,73 @@ export default function LearningApp() {
         )}
       </main>
     );
-  const chunk = data.chunks.find((c) => c.id === a?.chunkId),
+  const chunk = [
+      ...data.chunks,
+      ...(data.discovery ? [data.discovery] : []),
+      ...data.archivedLessons,
+    ].find((c) => c.id === a?.chunkId),
     next = data.chunks.find((c) => !data.passed.includes(c.id)),
-    unlocked = data.passed.length > 0,
+    unlocked = [...data.chunks, ...data.archivedLessons].some((c) =>
+      data.passed.includes(c.id),
+    ),
     pending = a?.result?.status === "pending",
     passed = a?.result?.passed,
     failed = a?.result?.status === "final" && !passed,
-    finished = data.passed.length === data.chunks.length;
+    finished = data.chunks.every((c) => data.passed.includes(c.id));
+  const dailyLessons = data.chunks.filter((c) => !c.assessmentOnly);
+  const publishedDays = dailyLessons.length;
+  const publishedTopics = simpleTopics(
+    data.chunks.flatMap((lesson) => lesson.subjects),
+  );
+  const masteredDays = dailyLessons.filter((lesson) =>
+    data.passed.includes(lesson.id),
+  ).length;
+  const wholeWeekPublished =
+    publishedDays >= 5 && data.chunks.some((c) => c.assessmentOnly);
+  const lessonName = (title: string) =>
+    title.replace(
+      /^(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Day \d+)\s*[·:—-]\s*/,
+      "",
+    );
   const nextIsActive = a?.chunkId === next?.id;
   const heading = finished
-    ? "A whole week of new ideas."
+    ? wholeWeekPublished
+      ? "A whole week of new ideas."
+      : "Today’s learning is complete."
     : nextIsActive && pending
-      ? "Your thinking is ready for review."
+      ? "Your score is pending."
       : nextIsActive && failed
         ? "A little practice. A fresh start."
         : nextIsActive
           ? "Pick up where you left off."
-          : next?.id === "weekly-test"
+          : next?.assessmentOnly
             ? "Ready for your weekly test?"
             : "Your next adventure starts here.";
   return (
     <div className="app-frame">
       <aside className="sidebar">
-        <Link href="/" className="brand">
-          <span className="logo-stamp">L</span>
-          <span>
-            Learning
-            <br />
-            Club
-          </span>
+        <Link
+          href="/"
+          className="brand genius-app-brand"
+          onNavigate={(event) => {
+            event.preventDefault();
+            void navigate("home");
+          }}
+        >
+          <GeniusLogo className="genius-nav-wordmark" />
+          <GeniusLogo icon className="genius-nav-icon" />
         </Link>
         <div className="profile">
-          <div className="profile-avatar">AZ</div>
+          <div className="profile-avatar">
+            {data.profile.name
+              .split(/\s+/)
+              .map((part) => part[0])
+              .slice(0, 2)
+              .join("")}
+          </div>
           <div>
-            <strong>Aharon Zev</strong>
-            <small>Grade 5</small>
+            <strong>{data.profile.name}</strong>
+            <small>Grade {data.profile.grade}</small>
           </div>
         </div>
         <nav aria-label="Main navigation">
@@ -352,13 +433,30 @@ export default function LearningApp() {
           <Link href="/style-lab">
             <Palette size={16} /> Explore the design lab
           </Link>
-          <p>First playable · local pilot</p>
+          <button
+            className="playground-link"
+            onClick={() => {
+              setPreview(true);
+              void navigate("arcade");
+            }}
+          >
+            <Gamepad2 size={18} /> Preview playground
+          </button>
         </div>
+        <button
+          className="account-logout"
+          onClick={() => void signOut()}
+          disabled={busy || committing}
+          aria-label="Sign out"
+        >
+          <LogOut size={21} />
+          <span>Sign out</span>
+        </button>
       </aside>
       <div className="main-wrap">
         <header className="app-top">
           <span>{data.weekTitle}</span>
-          <span className="local-badge">Sample curriculum & rewards</span>
+          <TicketWallet balance={data.balance} lifetime={data.lifetime} />
         </header>
         <main className="workspace">
           {error && (
@@ -374,24 +472,32 @@ export default function LearningApp() {
               <div className="page-heading">
                 <div>
                   <p className="eyebrow">Your next step</p>
-                  <h1>Hi, Aharon Zev.</h1>
+                  <h1>Hi, {data.profile.name}.</h1>
                 </div>
-                <TicketBalance balance={data.balance} />
+                <TicketBalance
+                  balance={data.balance}
+                  playerName={data.profile.name}
+                />
               </div>
               <section className="continue-card">
                 <div className="continue-copy">
                   <div className="chip">
                     <BookOpen size={15} />
                     {finished
-                      ? "Week complete"
-                      : next?.id === "weekly-test"
+                      ? wholeWeekPublished
+                        ? "Week complete"
+                        : "Daily lesson complete"
+                      : next?.assessmentOnly
                         ? "Weekly test"
-                        : `Chunk ${next?.order ?? 1} of 5`}
+                        : `Day ${next?.order ?? 1}`}
                   </div>
                   <h2>{heading}</h2>
                   <p>
-                    {next?.title ??
-                      "You passed every chunk and the weekly test. Look back at what you learned."}
+                    {next
+                      ? lessonName(next.title)
+                      : wholeWeekPublished
+                        ? "You passed every daily lesson and the weekly test. Look back at what you learned."
+                        : "Your first discoveries are saved. You can revisit your lesson or enjoy the arcade."}
                   </p>
                   <button
                     disabled={busy}
@@ -405,26 +511,34 @@ export default function LearningApp() {
                         : nextIsActive && failed
                           ? "Review my result"
                           : nextIsActive
-                            ? "Continue my lesson"
-                            : next?.id === "weekly-test"
-                              ? "Start weekly test"
-                              : "Start my lesson"}
+                            ? "Continue"
+                            : next?.assessmentOnly
+                              ? "Begin"
+                              : "Begin"}
                     <ArrowRight size={17} />
                   </button>
                   <small>
                     {pending && nextIsActive
-                      ? "Open explanations wait for parent scoring in this local pilot."
-                      : "Teaching, practice, and 15 questions. Your place saves as you go."}
+                      ? "Score pending. Your answers are safely saved."
+                      : "Your place saves as you go."}
                   </small>
                 </div>
                 <div className="lesson-progress">
+                  <LearningAvatar
+                    size={150}
+                    mood={finished ? "celebrate" : "greeting"}
+                  />
                   <span>
-                    {data.passed.filter((id) => id !== "weekly-test").length}
-                    <small>/ 5</small>
+                    {masteredDays}
+                    <small>/ {publishedDays}</small>
                   </span>
-                  <p>daily chunks passed</p>
+                  <p>
+                    {publishedDays === 1
+                      ? "daily lesson passed"
+                      : "daily lessons passed"}
+                  </p>
                   <div className="progress-dots">
-                    {data.chunks.slice(0, 5).map((c) => (
+                    {dailyLessons.map((c) => (
                       <span
                         key={c.id}
                         className={data.passed.includes(c.id) ? "done" : ""}
@@ -441,7 +555,7 @@ export default function LearningApp() {
                     className="text-button"
                     onClick={() => navigate("week")}
                   >
-                    View this week's plan
+                    Weekly plan
                   </button>
                 </div>
               </section>
@@ -474,7 +588,7 @@ export default function LearningApp() {
                   className="text-button"
                   onClick={() => navigate("prizes")}
                 >
-                  Take a peek at the prize shelf <ArrowRight size={14} />
+                  Prize Room <ArrowRight size={14} />
                 </button>
               </div>
             </>
@@ -482,10 +596,46 @@ export default function LearningApp() {
           {screen === "week" && (
             <>
               <PageTitle
-                overline="Five chunks. One weekly test."
-                title="A week of good questions."
+                overline="Your learning journey"
+                title="Your weekly plan"
               />
-              <p className="lede">{data.weekObjectives.join(" · ")}</p>
+              <section className="week-command" aria-label="Weekly progress">
+                <div>
+                  <h2>Small steps. Big discoveries.</h2>
+                  <p>
+                    {wholeWeekPublished
+                      ? "Five daily lessons, then your weekly challenge. Learn a little, try it out, and keep your ideas growing."
+                      : `${publishedDays === 1 ? "Your first lesson is" : `${publishedDays} daily lessons are`} ready. Start at Day 1 and work at your own pace.`}
+                  </p>
+                </div>
+                <div className="week-progress-summary">
+                  <strong>
+                    {masteredDays}
+                    <span> / {publishedDays}</span>
+                  </strong>
+                  <span>
+                    {publishedDays === 1
+                      ? "daily lesson mastered"
+                      : "daily lessons mastered"}
+                  </span>
+                  <progress
+                    aria-label="Daily lessons mastered"
+                    max={publishedDays}
+                    value={masteredDays}
+                  />
+                </div>
+              </section>
+              <section className="week-topics" aria-label="This week's topics">
+                <h2>What you’ll work on</h2>
+                <div className="topic-badges">
+                  {publishedTopics.map((label) => (
+                    <span key={label}>
+                      <span aria-hidden="true">{topicEmoji(label)}</span>{" "}
+                      {label}
+                    </span>
+                  ))}
+                </div>
+              </section>
               <div className="week-list">
                 {data.chunks.map((c) => {
                   const isPassed = data.passed.includes(c.id),
@@ -493,8 +643,12 @@ export default function LearningApp() {
                       .filter((p) => p.order < c.order)
                       .every((p) => data.passed.includes(p.id)),
                     attempts = data.attempts.filter((a) => a.chunkId === c.id);
+                  const latest = attempts.at(-1);
                   return (
-                    <article className="week-item" key={c.id}>
+                    <article
+                      className={`week-item${isPassed ? " week-item--passed" : can ? " week-item--ready" : " week-item--locked"}`}
+                      key={c.id}
+                    >
                       <span
                         className={"week-number " + (isPassed ? "done" : "")}
                       >
@@ -508,18 +662,25 @@ export default function LearningApp() {
                       </span>
                       <div>
                         <span className="eyebrow">
-                          {c.order === 6
-                            ? "Test day"
-                            : `Daily chunk ${c.order}`}
+                          {c.assessmentOnly ? "Weekly test" : `Day ${c.order}`}
                         </span>
-                        <h3>{c.title}</h3>
-                        <p>{c.subjects.join(" · ")}</p>
+                        <h3>{lessonName(c.title)}</h3>
+                        <p>
+                          {c.order === 6
+                            ? "🏆 This week’s ideas"
+                            : simpleTopics(c.subjects)
+                                .map(
+                                  (subject) =>
+                                    `${topicEmoji(subject)} ${subject}`,
+                                )
+                                .join(" · ")}
+                        </p>
                         {attempts.length > 0 && (
                           <small>
                             {attempts
                               .map(
                                 (at, i) =>
-                                  `Attempt ${i + 1}: ${at.result?.status === "final" ? at.result.percent.toFixed(1) + "%" : at.result?.status === "pending" ? "in review" : "in progress"}`,
+                                  `Attempt ${i + 1}: ${at.result?.status === "final" ? at.result.percent.toFixed(1) + "%" : at.result?.status === "pending" ? "score pending" : "in progress"}`,
                               )
                               .join(" / ")}
                           </small>
@@ -528,42 +689,122 @@ export default function LearningApp() {
                       <button
                         disabled={busy || !can}
                         className={can && !isPassed ? "primary" : ""}
-                        onClick={() =>
-                          isPassed
-                            ? navigate("scores")
-                            : a?.chunkId === c.id
-                              ? setScreen("lesson")
-                              : void start(c.id)
-                        }
+                        onClick={() => void start(c.id)}
                       >
-                        {isPassed ? (
-                          "View score"
-                        ) : !can ? (
-                          <>
-                            <Lock size={13} /> Locked
-                          </>
-                        ) : a?.chunkId === c.id ? (
-                          "Continue"
-                        ) : (
-                          "Begin"
-                        )}
+                        {!can
+                          ? "Locked"
+                          : isPassed
+                            ? "Review"
+                            : latest
+                              ? "Continue"
+                              : "Enter"}
+                        {can ? <ArrowRight size={18} /> : <Lock size={18} />}
                       </button>
+                      <ol
+                        className="week-inline-chunks"
+                        aria-label={`${c.title} chunks`}
+                      >
+                        {c.chunks.map((section, index) => {
+                          const ids =
+                            section.questionIds[
+                              (latest?.form ?? 0) % section.questionIds.length
+                            ] ?? [];
+                          const submitted =
+                            !!latest?.submittedChunkIds?.includes(section.id) ||
+                            !!latest?.submittedAt;
+                          const scored =
+                            submitted &&
+                            ids.length > 0 &&
+                            ids.every(
+                              (id) => typeof latest?.scores[id] === "number",
+                            );
+                          const percent = scored
+                            ? Math.round(
+                                (ids.reduce(
+                                  (total, id) =>
+                                    total + (latest?.scores[id] ?? 0),
+                                  0,
+                                ) /
+                                  (ids.length * 4)) *
+                                  100,
+                              )
+                            : null;
+                          const status =
+                            percent !== null
+                              ? `${percent}%`
+                              : submitted
+                                ? "Score pending"
+                                : latest?.taughtChunkIds?.includes(section.id)
+                                  ? "In progress"
+                                  : !can
+                                    ? "Locked"
+                                    : "Ready to explore";
+                          return (
+                            <li
+                              key={section.id}
+                              className={scored ? "chunk-scored" : ""}
+                            >
+                              <span className="chunk-count">{index + 1}</span>
+                              <div>
+                                <strong>{section.title}</strong>
+                                <span>
+                                  {simpleTopics(section.subjects).join(" · ")}
+                                </span>
+                              </div>
+                              <span className="chunk-status">{status}</span>
+                            </li>
+                          );
+                        })}
+                      </ol>
                     </article>
                   );
                 })}
               </div>
-              <p className="fine">
-                This local pilot unlocks the next chunk immediately after a pass
-                so we can test the whole week. Calendar pacing will be added to
-                the live family experience.
-              </p>
+              {wholeWeekPublished && (
+                <WeeklyBonusTest
+                  state={data}
+                  onAction={act}
+                  leaveGuard={lessonLeaveGuard}
+                />
+              )}
+              {data.discovery && (
+                <article className="weekly-discovery">
+                  <span className="discovery-icon" aria-hidden="true">
+                    🌉
+                  </span>
+                  <div>
+                    <span className="eyebrow">How things work</span>
+                    <h2>What holds a bridge up?</h2>
+                    <p>
+                      Peek inside. Follow the weight. Think like an engineer.
+                    </p>
+                  </div>
+                  <button
+                    disabled={busy}
+                    onClick={() => void start(data.discovery!.id)}
+                  >
+                    Enter <ArrowRight size={18} />
+                  </button>
+                </article>
+              )}
             </>
           )}
+          {screen === "lesson" && a && (a.contentVersion ?? 1) >= 2 && (
+            <LessonPlayer
+              key={a.id}
+              state={data}
+              onAction={act}
+              leaveGuard={lessonLeaveGuard}
+              onWeek={() => void navigate("week")}
+              onPlan={() => void navigate("week")}
+            />
+          )}
           {screen === "lesson" &&
+            (a?.contentVersion ?? 1) < 2 &&
             (!a ? (
               <Empty
                 title="Start with your weekly plan."
-                text="Choose your first available chunk to begin."
+                text="Choose your first available daily lesson to begin."
                 action={() => navigate("week")}
                 label="Open my plan"
               />
@@ -573,7 +814,7 @@ export default function LearningApp() {
                   overline={`${chunk?.title} · attempt ${a.form + 1}`}
                   title={
                     pending
-                      ? "Your explanations are in review."
+                      ? "Your score is pending."
                       : passed
                         ? "You earned your next step."
                         : "Let’s strengthen a few ideas."
@@ -598,14 +839,14 @@ export default function LearningApp() {
                     </h2>
                     <p>
                       {pending
-                        ? "A parent can score your open answers using the four-point rubric. Live AI grading is not connected in this pilot."
+                        ? "Your answers are saved. Your score will appear here when it is ready."
                         : passed
-                          ? "The next chunk and arcade are unlocked. Your one-time sample ticket reward has been saved."
+                          ? "Your next lesson and arcade are unlocked. Your earned tickets are saved."
                           : "Read the explanations below, then try an equivalent set of fresh questions. You need 90% to continue."}
                     </p>
                     {pending ? (
                       <button onClick={() => void refresh()}>
-                        <RefreshCw size={16} /> Check for reviewed scores
+                        <RefreshCw size={16} /> Refresh scores
                       </button>
                     ) : passed ? (
                       <button
@@ -687,14 +928,13 @@ export default function LearningApp() {
                         <li key={o}>{o}</li>
                       ))}
                     </ul>
-                    <div className="voice-placeholder">
-                      <Volume2 />
-                      <strong>Read aloud</strong>
-                      <p>
-                        ElevenLabs connection comes next. This pilot is ready to
-                        read on screen.
-                      </p>
-                    </div>
+                    <ReadAlong
+                      text={
+                        chunk?.teaching
+                          .map((block) => block.title + ". " + block.text)
+                          .join("\n\n") ?? ""
+                      }
+                    />
                     <p className="fine">
                       15 questions · score 90% to pass · pause whenever you
                       need.
@@ -783,39 +1023,95 @@ export default function LearningApp() {
             ) : null)}
           {(screen === "arcade" || screen === "mission") && (
             <>
-              <PageTitle
-                overline={
-                  screen === "mission"
-                    ? "The daily review game"
-                    : "You earned some play"
-                }
-                title={
-                  screen === "mission"
-                    ? `${new Date().toLocaleDateString("en-US", { weekday: "long", timeZone: "America/New_York" })} Rally`
-                    : "Choose your next game."
-                }
-              />
-              {!unlocked ? (
+              {!(
+                (unlocked || preview) &&
+                (screen === "mission" || game === "rally")
+              ) && (
+                <>
+                  <PageTitle
+                    overline={
+                      screen === "mission"
+                        ? "The daily review game"
+                        : preview
+                          ? "Preview playground"
+                          : "Your open-play arcade"
+                    }
+                    title={
+                      screen === "mission"
+                        ? `${new Date().toLocaleDateString("en-US", { weekday: "long", timeZone: "America/New_York" })} Rally`
+                        : "Choose your next game."
+                    }
+                  />
+                  <div className="preview-bar">
+                    <div>
+                      <strong>
+                        {preview ? "Preview playground" : "Your earned play"}
+                      </strong>
+                      <p>
+                        {preview
+                          ? "Try every game. Preview scores, tickets and lesson progress are never saved."
+                          : "Your game scores stay in your personal record."}
+                      </p>
+                    </div>
+                    <button
+                      aria-pressed={preview}
+                      onClick={() => {
+                        setGame(null);
+                        setPreview(!preview);
+                      }}
+                    >
+                      {preview ? "Leave preview" : "Preview all games"}
+                    </button>
+                  </div>
+                </>
+              )}
+              {!unlocked && !preview ? (
                 <Empty
                   title="Your first pass opens the arcade."
-                  text="Finish a chunk with 90% or better, then come back for a game."
+                  text="Finish a daily lesson with 90% or better, or try every game in the preview playground."
                   action={() => void continueLesson()}
-                  label="Continue my lesson"
+                  label="Continue"
                 />
               ) : screen === "mission" || game ? (
-                <>
-                  <button
-                    className="text-button"
-                    onClick={() => {
-                      setGame(null);
-                      if (screen === "mission") navigate("arcade");
-                    }}
-                  >
-                    ← Back to games
-                  </button>
+                <section
+                  className={
+                    screen === "mission" || game === "rally"
+                      ? "mission-shell"
+                      : "arcade-session"
+                  }
+                >
+                  <div className="mission-shell-bar">
+                    <button
+                      className="text-button"
+                      onClick={() => {
+                        setGame(null);
+                        if (screen === "mission") navigate("arcade");
+                      }}
+                    >
+                      ← Exit
+                    </button>
+                    {(screen === "mission" || game === "rally") && (
+                      <>
+                        <h1>
+                          {new Date().toLocaleDateString("en-US", {
+                            weekday: "long",
+                            timeZone: "America/New_York",
+                          })}{" "}
+                          Rally
+                        </h1>
+                        <span className="mission-mode">
+                          {preview ? "Preview · no scores saved" : "Review run"}
+                        </span>
+                      </>
+                    )}
+                  </div>
                   <GameRoom
+                    key={`${preview ? "preview" : "earned"}-${screen}-${game}`}
+                    preview={preview}
+                    reviewQuestions={data.missionQuestions}
                     game={screen === "mission" ? "rally" : game!}
                     onFinish={async (score: number, runId: string) => {
+                      if (preview) return true;
                       return !!(await act({
                         action: "game",
                         game: screen === "mission" ? "rally" : game,
@@ -825,11 +1121,11 @@ export default function LearningApp() {
                     }}
                   />
                   <p className="fine">
-                    Game prototype: run scores save locally. Arcade ticket
-                    rewards and curriculum review checkpoints are not connected
-                    yet.
+                    {preview
+                      ? "Preview runs are just for trying things out."
+                      : "These games earn practice points. Prize tickets come from your learning."}
                   </p>
-                </>
+                </section>
               ) : (
                 <div className="game-grid">
                   {(
@@ -868,141 +1164,19 @@ export default function LearningApp() {
             </>
           )}
           {screen === "prizes" && (
-            <>
-              <div className="page-heading">
-                <PageTitle
-                  overline="The prize counter"
-                  title="Good things to save for."
-                />
-                <TicketBalance balance={data.balance} />
-              </div>
-              <p className="lede">
-                Choose something small, or keep saving for something big.
-              </p>
-              <div className="prize-grid">
-                {data.prizes.map((p) => {
-                  const Icon =
-                    p.icon === "palette"
-                      ? Palette
-                      : p.icon === "utensils"
-                        ? Utensils
-                        : Blocks;
-                  return (
-                    <article className="panel prize" key={p.id}>
-                      <div className="prize-art">
-                        <Icon size={46} />
-                      </div>
-                      <h2>{p.title}</h2>
-                      <p>{p.description}</p>
-                      <strong className="price">
-                        <Ticket size={18} />
-                        {number(p.cost)} tickets
-                      </strong>
-                      <div
-                        className="meter"
-                        role="progressbar"
-                        aria-label={`Savings for ${p.title}`}
-                        aria-valuenow={Math.min(p.cost, data.balance)}
-                        aria-valuemin={0}
-                        aria-valuemax={p.cost}
-                      >
-                        <span
-                          style={{
-                            width: `${Math.min(100, (data.balance / p.cost) * 100)}%`,
-                          }}
-                        />
-                      </div>
-                      <small>
-                        {data.balance >= p.cost
-                          ? "Ready to order"
-                          : `${number(p.cost - data.balance)} more tickets to go`}
-                      </small>
-                      <button
-                        disabled={data.balance < p.cost}
-                        onClick={() =>
-                          setCheckout({ ...p, key: crypto.randomUUID() })
-                        }
-                      >
-                        {data.balance >= p.cost
-                          ? "Choose this prize"
-                          : "Keep saving"}
-                      </button>
-                    </article>
-                  );
-                })}
-              </div>
-              {checkout && (
-                <dialog
-                  ref={checkoutDialog}
-                  onCancel={() => setCheckout(null)}
-                  aria-label="Confirm sample prize"
-                  className="checkout panel"
-                >
-                  <h2>Make it yours?</h2>
-                  <p>
-                    {checkout.title} costs{" "}
-                    <strong>{checkout.cost} tickets</strong>.
-                  </p>
-                  <p>
-                    You'll have {data.balance - checkout.cost} tickets left.
-                  </p>
-                  <p className="fine">
-                    Sample order only. The parent inbox will record it; no real
-                    purchase or email is sent.
-                  </p>
-                  <div className="button-row">
-                    <button onClick={() => setCheckout(null)}>
-                      Keep saving
-                    </button>
-                    <button
-                      className="primary"
-                      disabled={busy}
-                      onClick={() =>
-                        void act({
-                          action: "checkout",
-                          prizeId: checkout.id,
-                          cost: checkout.cost,
-                          checkoutId: checkout.key,
-                        }).then((s) => {
-                          if (s) setCheckout(null);
-                        })
-                      }
-                    >
-                      Confirm order
-                    </button>
-                  </div>
-                </dialog>
-              )}
-              <h2 className="section-heading">My prizes</h2>
-              {data.orders.length ? (
-                <div className="panel">
-                  {data.orders
-                    .slice()
-                    .reverse()
-                    .map((o) => (
-                      <div className="order-row" key={o.id}>
-                        <Gift />
-                        <div>
-                          <strong>{o.title}</strong>
-                          <small>
-                            {new Date(o.at).toLocaleDateString()} · {o.cost}{" "}
-                            tickets
-                          </small>
-                        </div>
-                        <span className="chip">Confirmed</span>
-                      </div>
-                    ))}
-                </div>
-              ) : (
-                <p className="empty-note">
-                  Your first prize will appear here when you order it.
-                </p>
-              )}
-              <p className="fine">
-                Sample ticket prices. The real dollar conversion and prize
-                budget are not set yet.
-              </p>
-            </>
+            <PrizeRoom
+              state={data}
+              busy={busy}
+              error={error}
+              onOrder={async (prize, key) =>
+                !!(await act({
+                  action: "checkout",
+                  prizeId: prize.id,
+                  cost: prize.cost,
+                  checkoutId: key,
+                }))
+              }
+            />
           )}
           {screen === "scores" && (
             <>
@@ -1022,14 +1196,17 @@ export default function LearningApp() {
                           <div>
                             <strong>
                               {
-                                data.chunks.find((c) => c.id === at.chunkId)
-                                  ?.title
+                                [
+                                  ...data.chunks,
+                                  ...(data.discovery ? [data.discovery] : []),
+                                  ...data.archivedLessons,
+                                ].find((c) => c.id === at.chunkId)?.title
                               }
                             </strong>
                             <small>
                               Attempt {at.form + 1} ·{" "}
                               {at.result?.status === "pending"
-                                ? "Parent review"
+                                ? "Score pending"
                                 : at.result?.passed
                                   ? "Passed"
                                   : at.submittedAt
@@ -1045,7 +1222,7 @@ export default function LearningApp() {
                         </div>
                       ))
                   ) : (
-                    <p>Your first submitted chunk will start your record.</p>
+                    <p>Your first submitted lesson will start your record.</p>
                   )}
                 </section>
                 <section className="panel">
@@ -1054,7 +1231,7 @@ export default function LearningApp() {
                     Lifetime tickets earned. Spending never lowers your place.
                   </p>
                   {[
-                    { name: "Aharon Zev", earned: data.lifetime },
+                    { name: data.profile.name, earned: data.lifetime },
                     ...data.siblings,
                   ]
                     .sort((a, b) => b.earned - a.earned)
@@ -1067,9 +1244,6 @@ export default function LearningApp() {
                         </span>
                       </div>
                     ))}
-                  <p className="fine">
-                    Tobi and Ezra's learning paths come after this first pilot.
-                  </p>
                 </section>
               </div>
               <h2 className="section-heading">Arcade personal bests</h2>
@@ -1099,8 +1273,7 @@ export default function LearningApp() {
           )}
         </main>
         <footer className="app-footer">
-          Local pilot · progress saves on this computer · AI, voice, and
-          production accounts are not connected.
+          One good question can open a whole new world.
         </footer>
       </div>
     </div>
@@ -1114,16 +1287,16 @@ function PageTitle({ overline, title }: { overline: string; title: string }) {
     </div>
   );
 }
-function TicketBalance({ balance }: { balance: number }) {
+function TicketBalance({
+  balance,
+  playerName,
+}: {
+  balance: number;
+  playerName: string;
+}) {
   return (
-    <div className="ticket-balance">
-      <Ticket size={27} />
-      <strong>{number(balance)}</strong>
-      <span>
-        tickets
-        <br />
-        to spend
-      </span>
+    <div className="ticket-balance ticket-balance--illustrated">
+      <TicketDisplay balance={balance} playerName={playerName} />
     </div>
   );
 }
@@ -1179,7 +1352,7 @@ function BonusCard({
       <h2>{title}</h2>
       <p>{text}</p>
       <button disabled={!unlocked} onClick={action}>
-        {unlocked ? "Let’s play" : "Pass a chunk to play"}
+        {unlocked ? "Let’s play" : "Locked"}
         {unlocked && <ArrowRight size={15} />}
       </button>
     </article>
@@ -1219,28 +1392,12 @@ function QuestionInput({
     );
   if (q.kind === "match")
     return (
-      <div className="matches">
-        {q.left?.map((left) => (
-          <label key={left}>
-            <strong>{left}</strong>
-            <select
-              disabled={disabled}
-              value={typeof answer === "object" ? (answer[left] ?? "") : ""}
-              onChange={(e) =>
-                onChange({
-                  ...(typeof answer === "object" ? answer : {}),
-                  [left]: e.target.value,
-                })
-              }
-            >
-              <option value="">Choose a connection…</option>
-              {q.right?.map((right) => (
-                <option key={right}>{right}</option>
-              ))}
-            </select>
-          </label>
-        ))}
-      </div>
+      <ConnectorMatch
+        question={q}
+        answer={answer}
+        onChange={onChange}
+        disabled={disabled}
+      />
     );
   return (
     <>

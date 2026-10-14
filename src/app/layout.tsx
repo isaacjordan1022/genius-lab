@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
 export const metadata: Metadata = {
-  title: "Learning Club · First playable",
-  description: "A family learning arcade. Local development pilot.",
+  title: "Genius Lab",
+  description: "A place for curious minds to learn, think and play.",
+  icons: {
+    icon: "/brand/genius-lab-icon.svg",
+    apple: "/brand/genius-lab-icon.svg",
+  },
 };
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (

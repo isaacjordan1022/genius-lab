@@ -1,0 +1,264 @@
+.lesson-player {
+  max-width: 1060px;
+  margin: auto;
+}
+.lesson-breadcrumb,
+.activity-topline,
+.lesson-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.lesson-breadcrumb {
+  justify-content: flex-start;
+}
+.lesson-breadcrumb button {
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+  padding: 8px 0;
+  font-size: 18px;
+}
+.lesson-save {
+  margin-left: auto;
+  font-size: 18px;
+  color: #52645c;
+}
+.lesson-heading {
+  margin: 26px 0;
+}
+.lesson-heading h1 {
+  font-size: max(18px, clamp(25px, 4vw, 40px));
+  max-width: 26ch;
+  line-height: 1.18;
+}
+.lesson-heading p {
+  max-width: 64ch;
+}
+.lesson-teach > .primary {
+  margin-top: 22px;
+}
+.lesson-activity {
+  background: #fffefb;
+  padding: clamp(20px, 4vw, 40px);
+  border: 2px solid #c0cbc4;
+  border-radius: 24px;
+  box-shadow: 0 7px #dce3dc;
+}
+.lesson-activity h2 {
+  font-family: Lexend, sans-serif;
+  font-size: 24px;
+  line-height: 1.5;
+  max-width: 52ch;
+  margin: 24px 0;
+}
+.activity-topline {
+  font-size: 18px;
+  color: #4f625a;
+}
+.activity-dots {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+.activity-dots button {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border-radius: 50%;
+}
+.activity-dots button[aria-current="step"] {
+  background: #244e99;
+  color: white;
+}
+.lesson-controls {
+  margin-top: 26px;
+}
+.thinking-input {
+  display: grid;
+  gap: 12px;
+}
+.thinking-input textarea {
+  width: 100%;
+  font: inherit;
+  padding: 18px;
+  line-height: 1.75;
+  background: #f4f2fc;
+  border: 2px solid #ad9cd1;
+  border-radius: 14px;
+}
+.thinking-input small {
+  font-size: 18px;
+  color: #5d6261;
+}
+.lesson-reference {
+  margin-top: 26px;
+  padding: 20px;
+  border: 1px dashed #97aaa0;
+  border-radius: 20px;
+}
+.lesson-reference > span {
+  display: block;
+  font-size: 18px;
+  margin: 12px 0;
+}
+.lesson-day-result {
+  background: #e5eefc;
+  border: 2px solid #264d80;
+  padding: 24px;
+  border-radius: 20px;
+  margin-bottom: 24px;
+}
+.lesson-day-result > button {
+  margin: 12px 10px 0 0;
+}
+.answer-reflection {
+  background: #fffefb;
+  border: 1px solid #c3cec4;
+  border-radius: 20px;
+  padding: 24px;
+  margin: 18px 0;
+}
+.answer-reflection h3 {
+  font-family: Lexend, sans-serif;
+  font-size: 18px;
+}
+.response-recap {
+  white-space: pre-wrap;
+  padding: 14px;
+  border-left: 4px solid #8686c5;
+  background: #f3f1fb;
+  margin: 16px 0;
+}
+.response-recap p {
+  margin: 4px 0;
+}
+.answer-explanation {
+  background: #e9f4e7;
+  border-radius: 12px;
+  padding: 16px;
+  line-height: 1.75;
+}
+.daily-plan-chunks {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin: 24px 0;
+}
+.daily-plan-chunks article {
+  background: #fffefa;
+  border: 2px solid #ced4ca;
+  padding: 22px;
+  border-radius: 20px;
+}
+.daily-plan-chunks h3 {
+  font-size: 19px;
+}
+.daily-plan-chunks li {
+  margin-bottom: 8px;
+  font-size: 18px;
+}
+.global-wallet {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  border: 2px dashed #896920;
+  background: #fff2b8;
+  color: #533b0b;
+  border-radius: 12px;
+  padding: 6px 14px;
+  white-space: nowrap;
+  font-weight: 600;
+}
+.app-frame .app-top {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #f5f7f3ef;
+  backdrop-filter: blur(10px);
+  height: auto;
+  min-height: 68px;
+}
+.app-frame {
+  filter: none !important;
+}
+.app-frame h1,
+.app-frame h2,
+.app-frame h3 {
+  font-family: DynaPuff, ui-rounded, sans-serif;
+}
+.app-frame {
+  font-family: Lexend, sans-serif;
+}
+.lesson-player .lesson-activity h2,
+.lesson-player .answer-reflection h3 {
+  font-family: Lexend, sans-serif;
+}
+@media (max-width: 700px) {
+  .daily-plan-chunks {
+    grid-template-columns: 1fr;
+  }
+  .lesson-activity h2 {
+    font-size: 19px;
+  }
+  .app-top > span:first-child {
+    display: none;
+  }
+  .lesson-breadcrumb {
+    gap: 8px;
+  }
+  .lesson-breadcrumb button {
+    font-size: 18px;
+  }
+  .activity-dots {
+    flex-wrap: wrap;
+  }
+}
+
+/* The same generous touch targets and color language as the weekly room. */
+.activity-dots button{width:48px;height:48px;min-height:48px;display:grid;place-items:center;line-height:1;flex-shrink:0}
+.bonus-learning{margin:28px 0;padding:clamp(20px,4vw,32px);border:2px solid #d4a93a;border-radius:24px;background:#fff3cb;box-shadow:0 6px #e7ca76}
+.bonus-learning h2{color:#704915}.bonus-learning h3{font-family:Lexend,sans-serif;line-height:1.6;font-size:20px}
+.bonus-learning textarea{display:block;width:100%;background:#fffefa;border:2px solid #b69b58;border-radius:16px;padding:18px;margin:12px 0;font:inherit;line-height:1.7}
+.bonus-learning p{max-width:64ch;line-height:1.7}.bonus-test-item{border-top:2px dashed #d7bc73;padding-top:20px;margin-top:24px}
+
+.app-frame .lesson-breadcrumb button{padding:10px 16px;border-radius:14px;line-height:1.4}
+.lesson-player .section-heading{margin:0 0 18px;gap:16px}
+.lesson-player .section-heading h2{margin:0;line-height:1.3}
+.lesson-player .lesson-teach .teaching-cards{margin-top:0}
+
+/* A compact route keeps the learning itself above the fold. */
+.lesson-player .lesson-heading{margin:20px 0 22px}
+.lesson-player .lesson-heading .eyebrow{margin:0 0 8px}
+.lesson-player .lesson-heading h1{font-size:clamp(26px,2.6vw,34px);line-height:1.25;max-width:none;margin:0;font-weight:500}
+.lesson-route{display:flex;gap:12px;align-items:stretch;margin:0 0 28px;padding:12px;background:#fffefa;border:2px solid #dbe2d8;border-radius:22px}
+.app-frame .lesson-route button{flex:1;min-width:0;display:flex;align-items:center;justify-content:flex-start;gap:12px;padding:12px;border:0;border-radius:14px;background:transparent;color:#203d7e;box-shadow:none;text-align:left;line-height:1.3}
+.app-frame .lesson-route button:hover:not(:disabled):not([aria-current="step"]){background:#dceaff;color:#173a97}
+.app-frame .lesson-route button[aria-current="step"]{background:#173a97;color:#eef4ff;box-shadow:0 3px #0b286f}
+.app-frame .lesson-route button:disabled{opacity:1;background:transparent;color:#626e7d;box-shadow:none}
+.lesson-route-node{display:grid;place-items:center;flex:0 0 36px;width:36px;height:36px;border:2px solid currentColor;border-radius:50%;font-size:18px;line-height:1}
+.lesson-route-label{font-size:18px;font-weight:500}
+.app-frame .lesson-route small{display:block;font-size:18px;font-weight:400;color:inherit;line-height:1.3;margin-top:3px}
+/* Review feels like a colorful notebook, with a clear answer/explanation split. */
+.lesson-player .answer-reflection{--review-dark:#173a97;--review-light:#dceaff;--review-mid:#adc5ea;padding:24px;border:2px solid var(--review-dark);border-radius:24px;background:var(--review-light);color:var(--review-dark);box-shadow:0 5px var(--review-mid);overflow:hidden;margin:24px 0}
+.lesson-player .answer-reflection:nth-of-type(3n+2){--review-dark:#682b80;--review-light:#f0dcff;--review-mid:#d2ade1}
+.lesson-player .answer-reflection:nth-of-type(3n){--review-dark:#195044;--review-light:#ddf2e8;--review-mid:#9dcbba}
+.reflection-topline{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin:-24px -24px 20px;padding:16px 24px;background:var(--review-dark);color:var(--review-light)}
+.reflection-number{font-family:DynaPuff,ui-rounded,sans-serif;font-weight:400;font-size:22px}
+.reflection-score{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border:1px solid currentColor;border-radius:24px;font-size:18px;white-space:nowrap}
+.lesson-player .answer-reflection h3{font-size:20px;font-weight:500;line-height:1.6;color:inherit;margin:0 0 16px}
+.lesson-player .response-recap{border:0;border-radius:16px;background:#ffffff9c;padding:18px;margin:0;line-height:1.7;color:inherit}
+.response-label{display:block;font-size:18px;margin-bottom:6px}
+.reflection-squiggle{height:12px;margin:20px 0;background:var(--review-dark);opacity:.45;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='12' viewBox='0 0 40 12'%3E%3Cpath d='M-10 6 Q0 -3 10 6 T30 6 T50 6' fill='none' stroke='black' stroke-width='3'/%3E%3C/svg%3E") repeat-x center}
+.lesson-player .answer-explanation{background:transparent;padding:0;margin:0;max-width:65ch;color:inherit;line-height:1.7}
+.lesson-player .answer-reflection details{margin-top:20px;border-top:1px solid var(--review-mid);padding-top:16px}
+@media(max-width:700px){
+ .lesson-route{gap:6px;padding:8px}
+ .app-frame .lesson-route button{flex-direction:column;align-items:center;text-align:center;gap:8px;padding:10px 4px}
+ .lesson-route-label{overflow-wrap:anywhere}
+ .lesson-player .answer-reflection{padding:18px}
+ .reflection-topline{margin:-18px -18px 16px;padding:14px 18px}
+ .lesson-player .lesson-heading{margin:18px 0}
+}

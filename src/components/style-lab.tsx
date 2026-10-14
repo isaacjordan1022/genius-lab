@@ -3,7 +3,6 @@
 import { useState, type CSSProperties } from "react";
 import {
   ArrowLeft,
-  ArrowUpRight,
   Check,
   ChevronRight,
   LockKeyhole,
@@ -13,6 +12,7 @@ import {
   Volume2,
 } from "lucide-react";
 import "./style-lab.css";
+import TicketDisplay from "./ticket-display";
 
 type Palette = {
   name: string;
@@ -63,75 +63,179 @@ const palettes: Palette[] = [
     accent: "#F4CB5C",
     use: "Tickets & prizes",
   },
+  {
+    name: "Bubblegum",
+    bg: "#9F2863",
+    light: "#FFE0F0",
+    dark: "#5C1539",
+    accent: "#F9A6D2",
+    use: "Creative thinking",
+  },
+  {
+    name: "Tangerine",
+    bg: "#984514",
+    light: "#FFF0DC",
+    dark: "#562607",
+    accent: "#F8B66D",
+    use: "Big discoveries",
+  },
+  {
+    name: "Forest",
+    bg: "#205B35",
+    light: "#E0F7D7",
+    dark: "#133A23",
+    accent: "#A8DE99",
+    use: "Science & nature",
+  },
+  {
+    name: "Midnight",
+    bg: "#263E70",
+    light: "#E3EDFF",
+    dark: "#152342",
+    accent: "#A9C5FF",
+    use: "Quiet concentration",
+  },
+  {
+    name: "Violet",
+    bg: "#5333A4",
+    light: "#EFE6FF",
+    dark: "#2F1B61",
+    accent: "#C6ABFF",
+    use: "Imagination & stories",
+  },
+  {
+    name: "Ocean",
+    bg: "#075B84",
+    light: "#DDF6FF",
+    dark: "#04334B",
+    accent: "#94DBF3",
+    use: "World explorers",
+  },
+  {
+    name: "Olive",
+    bg: "#505D16",
+    light: "#F5F7C7",
+    dark: "#2D350B",
+    accent: "#D0DE81",
+    use: "Thoughtful practice",
+  },
 ];
-const pairings = [
+const pairing = { display: "DynaPuff", body: "Lexend", weight: 500 };
+const surfaces = [
   {
-    display: "Lilita One",
-    body: "Atkinson Hyperlegible",
-    word: "Good thinking!",
-    mood: "Chunky arcade lettering + a calm, clear reader.",
-    source: "Lilita+One",
-    file: "lilitaone-LilitaOne-Regular.ttf",
-    license: "lilitaone",
+    name: "Soft cream",
+    color: "#FAF8F0",
+    ink: "#A59B7A",
+    note: "Warm, soft, and a little storybook.",
+    motif: "stars",
+  },
+  {
+    name: "Cloud sage",
+    color: "#F4F7F3",
+    ink: "#8D9E8E",
+    note: "A whisper of green for a calm learning desk.",
+    motif: "pencils",
+  },
+  {
+    name: "Pearl gray",
+    color: "#F6F7F9",
+    ink: "#9199AD",
+    note: "Clean and airy, with tiny rounded shapes.",
+    motif: "shapes",
+  },
+];
+function surfaceStyle(surface: (typeof surfaces)[number]): CSSProperties {
+  return {
+    "--sl-paper": surface.color,
+    "--sl-surface-pattern": 'url("/design/quiet-shapes.svg")',
+  } as CSSProperties;
+}
+const typeScale = [
+  {
+    role: "Celebration",
+    face: "DynaPuff",
+    size: "40–64",
+    weight: 500,
+    leading: "1.1",
+    tracking: "−0.02em",
+    sample: "Good thinking!",
+    className: "celebration",
+    use: "A short reward or a big welcome. One per screen.",
+  },
+  {
+    role: "Page title",
+    face: "DynaPuff",
+    size: "32–44",
+    weight: 500,
+    leading: "1.15",
+    tracking: "−0.01em",
+    sample: "Your weekly plan",
+    className: "page",
+    use: "A clear destination in 3–6 words.",
+  },
+  {
+    role: "Activity title",
+    face: "DynaPuff",
+    size: "24–30",
+    weight: 500,
+    leading: "1.2",
+    tracking: "0",
+    sample: "The clue is in the details",
+    className: "activity",
+    use: "The beginning of a chunk, card, or game.",
+  },
+  {
+    role: "Question",
+    face: "Lexend",
+    size: "20–24",
+    weight: 600,
+    leading: "1.5",
+    tracking: "0",
+    sample: "What makes you think the character is worried?",
+    className: "question",
+    use: "A question that is easy to find and reread.",
+  },
+  {
+    role: "Reading",
+    face: "Lexend",
+    size: "18–20",
     weight: 400,
+    leading: "1.8",
+    tracking: "0",
+    sample:
+      "Milo checked the clock, then his pocket. The letter was still there. So why did he check again?",
+    className: "reading",
+    use: "Passages, concepts, examples, and explanations.",
   },
   {
-    display: "Fredoka",
-    body: "Nunito",
-    word: "What if…",
-    mood: "Round, curious, and friendly across all three ages.",
-    source: "Fredoka",
-    file: "fredoka-Fredoka-wdth-wght.ttf",
-    license: "fredoka",
-    weight: 700,
+    role: "Action",
+    face: "Lexend",
+    size: "18–20",
+    weight: 600,
+    leading: "1.4",
+    tracking: "0",
+    sample: "Show my thinking",
+    className: "action",
+    use: "Buttons and navigation. At least a 48px target.",
   },
   {
-    display: "Bungee",
-    body: "Atkinson Hyperlegible",
-    word: "LEVEL UP",
-    mood: "A proper arcade marquee. Best in short bursts.",
-    source: "Bungee",
-    file: "bungee-Bungee-Regular.ttf",
-    license: "bungee",
-    weight: 400,
-  },
-  {
-    display: "Baloo 2",
-    body: "Lexend",
-    word: "Aha! I get it.",
-    mood: "Soft, lively shapes with a steady reading rhythm.",
-    source: "Baloo+2",
-    file: "baloo2-Baloo2-wght.ttf",
-    license: "baloo2",
-    weight: 800,
-  },
-  {
-    display: "Coiny",
-    body: "Nunito",
-    word: "Big ideas!",
-    mood: "Puffy, playful letters made for outlined headings.",
-    source: "Coiny",
-    file: "coiny-Coiny-Regular.ttf",
-    license: "coiny",
-    weight: 400,
-  },
-  {
-    display: "DynaPuff",
-    body: "Lexend",
-    word: "Plot twist!",
-    mood: "A little eccentric, with a storybook personality.",
-    source: "DynaPuff",
-    file: "dynapuff-DynaPuff-wdth-wght.ttf",
-    license: "dynapuff",
-    weight: 700,
+    role: "Supporting label",
+    face: "Lexend",
+    size: "18",
+    weight: 500,
+    leading: "1.5",
+    tracking: "0",
+    sample: "Chunk 2 of 3 · Words & stories",
+    className: "label",
+    use: "Progress and helpful context. Never the main lesson.",
   },
 ];
 const directions = [
   {
     name: "Pocket Arcade",
-    label: "Our starting favorite",
+    label: "Our selected direction",
     theme: 0,
-    font: 0,
+    font: 5,
     title: "Think big.\nPlay bright.",
     copy: "Cobalt cabinets, paper workbooks, bold ticket rewards. Grown-up enough for Aharon Zev; joyful enough for Ezra.",
     colors: ["#2345BC", "#E1E8FF", "#AF352F", "#FFF0B9"],
@@ -141,7 +245,7 @@ const directions = [
     name: "Wonder Workshop",
     label: "Softer & curious",
     theme: 3,
-    font: 1,
+    font: 5,
     title: "What will\nyou discover?",
     copy: "Teal, mint, and warm paper. Rounded type and friendly shapes make room for careful thinking.",
     colors: ["#07615B", "#D7F9E9", "#805300", "#F5DDFC"],
@@ -151,7 +255,7 @@ const directions = [
     name: "Prize Parade",
     label: "The bolder option",
     theme: 1,
-    font: 4,
+    font: 5,
     title: "A little\nmore WOW.",
     copy: "Plum, lilac, and golden ticket details. Big puffy headlines give the prize counter a personality of its own.",
     colors: ["#672479", "#F5DDFC", "#AF352F", "#F4CB5C"],
@@ -190,34 +294,29 @@ function Star({ className = "" }: { className?: string }) {
   );
 }
 function TicketGraphic({ small = false }: { small?: boolean }) {
+  const [print, setPrint] = useState(0);
   return (
-    <div
-      className={`sl-ticket ${small ? "sl-ticket-small" : ""}`}
-      aria-label="Sample ticket balance: 1,240 tickets"
-    >
-      <span className="sl-ticket-serial" aria-hidden="true">
-        ✦ 017 ✦
-      </span>
-      <div>
-        <span className="sl-ticket-label">Good thinking pays off</span>
-        <strong>1,240</strong>
-        <span className="sl-ticket-unit">tickets earned</span>
-      </div>
-      <div className="sl-ticket-stub" aria-hidden="true">
-        ★
-        <span>
-          KEEP
-          <br />
-          GOING!
-        </span>
-      </div>
+    <div className={small ? "sl-printer sl-printer-small" : "sl-printer"}>
+      <TicketDisplay key={print} balance={1240} playerName="Aharon Zev" printing={print > 0} />
+      <button
+        className="sl-paper-button td-print-button"
+        onClick={() => setPrint((n) => n + 1)}
+      >
+        <RotateCcw size={14} /> Replay ticket printing
+      </button>
+      {small && (
+        <p className="td-demo-note">
+          Animation preview only. The real dashboard will show your saved ticket
+          balance.
+        </p>
+      )}
     </div>
   );
 }
 
 export default function StyleLab() {
   const [paletteIndex, setPaletteIndex] = useState(0);
-  const [fontIndex, setFontIndex] = useState(0);
+  const [surfaceIndex, setSurfaceIndex] = useState(0);
   const [directionIndex, setDirectionIndex] = useState(0);
   const [fill, setFill] = useState(palettes[0].light);
   const [outline, setOutline] = useState(palettes[0].dark);
@@ -225,8 +324,8 @@ export default function StyleLab() {
   const [sample, setSample] = useState("Good thinking!");
   const [burst, setBurst] = useState(0);
   const [saved, setSaved] = useState(false);
-  const palette = palettes[paletteIndex],
-    pairing = pairings[fontIndex];
+  const palette = palettes[paletteIndex];
+  const surface = surfaces[surfaceIndex];
   function selectPalette(index: number) {
     setPaletteIndex(index);
     setFill(palettes[index].light);
@@ -236,7 +335,6 @@ export default function StyleLab() {
   function selectDirection(index: number) {
     setDirectionIndex(index);
     selectPalette(directions[index].theme);
-    setFontIndex(directions[index].font);
   }
   function saveChoice() {
     try {
@@ -245,6 +343,7 @@ export default function StyleLab() {
         JSON.stringify({
           direction: directions[directionIndex].name,
           palette: palette.name,
+          surface: surface.name,
           headline: pairing.display,
           body: pairing.body,
           fill,
@@ -266,12 +365,13 @@ export default function StyleLab() {
   };
   const customContrast = contrast(fill, palette.bg);
   return (
-    <main className="style-lab">
+    <main className="style-lab" style={surfaceStyle(surface)}>
       <nav className="sl-nav" aria-label="Design lab navigation">
         <a href="/" className="sl-back">
           <ArrowLeft size={18} /> Back to the prototype
         </a>
-        <a href="#type">Type playground</a>
+        <a href="#type">Type & spacing</a>
+        <a href="#surfaces">Light surfaces</a>
         <a href="#colors">Color studio</a>
         <a href="#avatars">Meet the avatars</a>
       </nav>
@@ -289,8 +389,9 @@ export default function StyleLab() {
             </span>
           </h1>
           <p>
-            A hands-on mood board for our family’s learning arcade. Try the
-            lettering, mix the colors, and find its personality.
+            Our family’s learning arcade, taking shape. DynaPuff and Lexend are
+            our typefaces. Explore their sizes, the color families, and three
+            quiet surfaces.
           </p>
           <div className="sl-intro-links">
             <a href="#directions" className="sl-paper-button">
@@ -310,9 +411,6 @@ export default function StyleLab() {
           <span className="sl-doodle-arrow" aria-hidden="true">
             ⤴
           </span>
-          <div className="sl-sticker">
-            Aha!<span>That’s the feeling.</span>
-          </div>
         </div>
       </header>
 
@@ -334,7 +432,7 @@ export default function StyleLab() {
               style={
                 {
                   ...themeStyle(palettes[direction.theme]),
-                  "--sl-direction-font": `'${pairings[direction.font].display}'`,
+                  "--sl-direction-font": "DynaPuff",
                 } as CSSProperties
               }
             >
@@ -449,22 +547,13 @@ export default function StyleLab() {
           </div>
           <aside className="sl-studio-controls">
             <h3>Make it your own.</h3>
-            <label>
-              Headline
-              <select
-                value={fontIndex}
-                onChange={(e) => {
-                  setFontIndex(Number(e.target.value));
-                  setSaved(false);
-                }}
-              >
-                {pairings.map((p, i) => (
-                  <option key={p.display} value={i}>
-                    {p.display}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <div className="sl-locked-type">
+              <Check size={18} />
+              <div>
+                <strong>DynaPuff + Lexend</strong>
+                <span>Our chosen type pairing</span>
+              </div>
+            </div>
             <label>
               Try your own words
               <input
@@ -532,7 +621,8 @@ export default function StyleLab() {
               )}
             </button>
             <p className="sl-control-note">
-              For our design review. This won’t change the grayscale prototype.
+              Saves this design sample on this device. It does not change the
+              learning app.
             </p>
           </aside>
         </div>
@@ -555,8 +645,8 @@ export default function StyleLab() {
           <div>
             <span className="sl-rule-swatch sl-paper-swatch">Aa</span>
             <div>
-              <strong>Warm graph paper</strong>
-              <span>#F7F5ED + #273329</span>
+              <strong>{surface.name}</strong>
+              <span>{surface.color} + #273329</span>
               <p>Reading, navigation, and breathing room.</p>
             </div>
           </div>
@@ -582,82 +672,233 @@ export default function StyleLab() {
         </div>
       </section>
 
-      <section id="type" className="sl-section">
+      <section id="surfaces" className="sl-section">
         <div className="sl-section-heading">
           <div>
-            <h2>Six pairs. Six personalities.</h2>
+            <h2>A softer place to think.</h2>
             <p>
-              Real fonts, locally installed. Outlined display type up top;
-              comfortable lesson reading below.
+              Almost-white surfaces, with tiny rounded details you notice only
+              when you look closely. Choose one to try across this page.
             </p>
           </div>
           <span className="sl-small-note">
-            All six are free to use under the OFL.
+            Three light surfaces. No grid lines.
           </span>
         </div>
-        <div className="sl-font-grid">
-          {pairings.map((p, index) => {
-            const theme = palettes[index % palettes.length];
-            return (
-              <article
-                key={p.display}
-                className="sl-font-card"
-                style={themeStyle(theme)}
+        <div className="sl-surface-options">
+          {surfaces.map((option, index) => (
+            <button
+              type="button"
+              key={option.name}
+              aria-pressed={surfaceIndex === index}
+              className={`sl-surface-option ${surfaceIndex === index ? "is-selected" : ""}`}
+              style={surfaceStyle(option)}
+              onClick={() => {
+                setSurfaceIndex(index);
+                setSaved(false);
+              }}
+            >
+              <span className="sl-surface-preview">
+                <span className="sl-surface-sticker">A little wonder</span>
+                <span className="sl-surface-check">
+                  {surfaceIndex === index ? <Check size={18} /> : "+"}
+                </span>
+              </span>
+              <span className="sl-surface-caption">
+                <strong>{option.name}</strong>
+                <span>{option.color}</span>
+                <p>{option.note}</p>
+              </span>
+            </button>
+          ))}
+        </div>
+        <div className="sl-surface-reading" style={surfaceStyle(surface)}>
+          <div>
+            <span>Quiet around the lesson</span>
+            <h3>Let the words do the work.</h3>
+            <p>
+              The tiny shapes live around the activity. Reading sits on a plain,
+              almost-white card, so our eyes can settle on the story.
+            </p>
+          </div>
+          <article>
+            <h4>One small detail</h4>
+            <p>
+              Milo folded the letter into a tiny square. Then he unfolded it
+              again. <mark>His hands wouldn’t stay still.</mark>
+            </p>
+            <p>What can that detail tell you about how Milo feels?</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="type" className="sl-section">
+        <div className="sl-section-heading">
+          <div>
+            <h2>Two voices. One clear system.</h2>
+            <p>
+              DynaPuff brings the delight. Lexend carries the thinking. These
+              are the sizes and rhythms we’ll use across every child’s
+              experience.
+            </p>
+          </div>
+          <span className="sl-type-approved">
+            <Check size={16} /> DynaPuff + Lexend
+          </span>
+        </div>
+        <div className="sl-type-scale">
+          {typeScale.map((level) => (
+            <article className="sl-type-row" key={level.role}>
+              <div className="sl-type-meta">
+                <strong>{level.role}</strong>
+                <span>
+                  {level.face} · {level.weight}
+                </span>
+                <span>
+                  {level.size}px · line height {level.leading}
+                </span>
+                <span>Tracking {level.tracking}</span>
+              </div>
+              <div>
+                <p className={`sl-type-specimen sl-type-${level.className}`}>
+                  {level.sample}
+                </p>
+                <p className="sl-type-use">{level.use}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+        <div className="sl-weight-guide">
+          {["DynaPuff", "Lexend"].map((face) => (
+            <article key={face}>
+              <h3>{face}: the useful weights</h3>
+              <p>
+                {face === "DynaPuff"
+                  ? "Locally installed variable font: 400–700. Use 400 or 500 for normal headings. Heavier weights are shown only for comparison."
+                  : "Locally installed variable font: 100–900. Our interface uses 400, 500, and 600; 700 is for brief emphasis."}
+              </p>
+              <div>
+                {[400, 500, 600, 700].map((weight) => (
+                  <span key={weight}>
+                    <strong style={{ fontFamily: face, fontWeight: weight }}>
+                      Aa
+                    </strong>
+                    <small>{weight}</small>
+                  </span>
+                ))}
+              </div>
+            </article>
+          ))}
+        </div>
+        <div className="sl-reading-system">
+          <article>
+            <h3>Room for a good story.</h3>
+            <p className="sl-reading-system-note">
+              18px Lexend · 400 · 1.8 line height · 58ch maximum width
+            </p>
+            <div className="sl-reading-measure">
+              <p>
+                “It’s only a painting,” said Ada. Then she noticed the light. It
+                slipped across the water in little broken pieces, as if someone
+                had scattered coins across the pond.
+              </p>
+              <p>
+                She leaned closer. The shapes weren’t perfectly clear. Somehow,
+                that made the moment feel more alive.
+              </p>
+            </div>
+            <p className="sl-type-use">
+              Short paragraphs. A full line of space between ideas. Highlight a
+              useful word or piece of evidence; leave the rest quiet.
+            </p>
+          </article>
+          <aside>
+            <h3>Small rules, big difference.</h3>
+            <ul>
+              <li>Passages stay within 48–60 characters per line.</li>
+              <li>Use 20–22px reading text for Ezra and early readers.</li>
+              <li>Question prompts get more weight, never an outline.</li>
+              <li>Outlines belong on short, large DynaPuff headlines only.</li>
+              <li>Use normal letter spacing for reading and buttons.</li>
+              <li>Never shrink the main lesson text to make a card fit.</li>
+            </ul>
+            <div className="sl-type-downloads">
+              <a href="/design/fonts/dynapuff-DynaPuff-wdth-wght.ttf" download>
+                Download DynaPuff
+              </a>
+              <a href="/design/fonts/lexend-Lexend-wght.ttf" download>
+                Download Lexend
+              </a>
+            </div>
+          </aside>
+        </div>
+        <div className="sl-spacing-system">
+          <div className="sl-section-heading">
+            <div>
+              <h3>Space has a rhythm, too.</h3>
+              <p>
+                Use the same small set of distances, so every page feels
+                related.
+              </p>
+            </div>
+          </div>
+          <div className="sl-space-tokens">
+            {[4, 8, 12, 16, 24, 32, 48, 64].map((size) => (
+              <div key={size}>
+                <span style={{ height: size }} />
+                <strong>{size}px</strong>
+              </div>
+            ))}
+          </div>
+          <div className="sl-spacing-examples">
+            <article>
+              <span className="sl-spacing-measure">
+                24px card padding · 16px between ideas
+              </span>
+              <h4>A useful example</h4>
+              <p>
+                Ada noticed the broken reflections. What did those details make
+                you imagine?
+              </p>
+              <button
+                type="button"
+                onClick={() => setBurst((value) => value + 1)}
               >
-                <div className="sl-font-title">
-                  <span>{p.display}</span>
-                  <span>+ {p.body}</span>
+                Show my thinking
+              </button>
+              <span className="sl-spacing-button-note">
+                16px × 24px button padding · 48px minimum height
+              </span>
+            </article>
+            <div>
+              <dl>
+                <div>
+                  <dt>Icon to label</dt>
+                  <dd>8px</dd>
                 </div>
-                <div
-                  className="sl-font-sample"
-                  style={{
-                    fontFamily: `'${p.display}', sans-serif`,
-                    fontWeight: p.weight,
-                  }}
-                >
-                  {p.word}
+                <div>
+                  <dt>Heading to copy</dt>
+                  <dd>12–16px</dd>
                 </div>
-                <div
-                  className="sl-font-body"
-                  style={{ fontFamily: `'${p.body}', sans-serif` }}
-                >
-                  <p>
-                    Look closely. What detail in the painting makes the room
-                    feel quiet? Tell us what you notice and why it matters.
-                  </p>
-                  <span>Aa Bb Gg Ii Ll · 0123456789</span>
+                <div>
+                  <dt>Between related cards</dt>
+                  <dd>16–24px</dd>
                 </div>
-                <p className="sl-font-description">{p.mood}</p>
-                <div className="sl-font-links">
-                  <button
-                    onClick={() => {
-                      setFontIndex(index);
-                      selectPalette(index % palettes.length);
-                      document.getElementById("colors")?.scrollIntoView({
-                        behavior: window.matchMedia(
-                          "(prefers-reduced-motion: reduce)",
-                        ).matches
-                          ? "instant"
-                          : "smooth",
-                      });
-                    }}
-                  >
-                    Try this pair <ArrowUpRight size={15} />
-                  </button>
-                  <a href={`/design/fonts/${p.file}`} download>
-                    Download
-                  </a>
-                  <a
-                    href={`https://fonts.google.com/specimen/${p.source}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Source ↗
-                  </a>
+                <div>
+                  <dt>Inside a card</dt>
+                  <dd>24px desktop · 16–20px mobile</dd>
                 </div>
-              </article>
-            );
-          })}
+                <div>
+                  <dt>Between sections</dt>
+                  <dd>48–64px desktop · 32px mobile</dd>
+                </div>
+                <div>
+                  <dt>Main content width</dt>
+                  <dd>1,200px max; reading 58ch</dd>
+                </div>
+              </dl>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -678,12 +919,15 @@ export default function StyleLab() {
             </span>
             <TicketGraphic small />
             <p>
-              A physical ticket shape, a clear number, and a tiny bit of
-              swagger. No confusing coins-versus-points wallet.
+              A real little printing moment: rollers, perforations, a gold seal,
+              and a crisp ticket balance. One brief celebration when tickets
+              arrive.
             </p>
           </article>
           <article className="sl-prize-specimen">
-            <span className="sl-specimen-label">A shelf worth saving for.</span>
+            <span className="sl-specimen-label">
+              A room full of possibility.
+            </span>
             <div className="sl-prize-box">
               <span className="sl-prize-flag">Dream prize</span>
               <svg
@@ -780,61 +1024,12 @@ export default function StyleLab() {
         </div>
       </section>
 
-      <section className="sl-section sl-premium">
-        <div>
-          <h2>Two paid fonts worth a look.</h2>
-          <p>
-            The free options are strong enough to build with. These are optional
-            foundry references, not installed samples.
-          </p>
-        </div>
-        <div className="sl-premium-options">
-          <a
-            href="https://ohnotype.co/fonts/obviously"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <strong>
-              Obviously <ArrowUpRight size={20} />
-            </strong>
-            <span>OH no Type Company</span>
-            <p>
-              Broad, powerful lettering for an older-kid arcade identity.
-              Explore the Wide and Extended families.
-            </p>
-            <span className="sl-premium-price">
-              Listed: $30 individual style / $119 width family*
-            </span>
-          </a>
-          <a
-            href="https://ohnotype.co/fonts/softie"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <strong>
-              Ohno Softie <ArrowUpRight size={20} />
-            </strong>
-            <span>OH no Type Company</span>
-            <p>
-              Extra-rounded letters for a softer, more unusual identity. Worth
-              comparing with Fredoka and Coiny.
-            </p>
-            <span className="sl-premium-price">Listed: $99 family*</span>
-          </a>
-        </div>
-        <p className="sl-source-note">
-          *Foundry listings checked October 7, 2026. The final price depends on
-          selected styles and web licensing; these are not checkout quotes. No
-          paid fonts have been downloaded or purchased.
-        </p>
-      </section>
       <footer className="sl-footer">
         <div>
           <strong>Keep the joy. Protect the reading.</strong>
           <p>
-            Our recommended starting point: Pocket Arcade, Lilita One headlines,
-            Atkinson Hyperlegible passages, and calm paper between colorful
-            moments.
+            Our selected pairing: DynaPuff headlines and Lexend for reading.
+            Rich color for rewards, calm paper for careful thinking.
           </p>
         </div>
         <div className="sl-footer-links">
@@ -855,18 +1050,21 @@ export default function StyleLab() {
             official Google Fonts repository
           </a>
           . SIL Open Font License files are included with each family:{" "}
-          {pairings.map((p, index) => (
-            <span key={p.license}>
-              {index > 0 ? " · " : ""}
-              <a
-                href={`/design/fonts/${p.license}-OFL.txt`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                {p.display}
-              </a>
-            </span>
-          ))}
+          <a
+            href="/design/fonts/dynapuff-OFL.txt"
+            target="_blank"
+            rel="noreferrer"
+          >
+            DynaPuff
+          </a>
+          {" · "}
+          <a
+            href="/design/fonts/lexend-OFL.txt"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Lexend
+          </a>
           . Lettering effects, graphics, and palette proposals are original to
           this project.
         </p>

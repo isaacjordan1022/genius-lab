@@ -16,17 +16,24 @@
     "lucide-react": "1.52.0",
     "motion": "14.0.0",
     "next": "16.4.0",
+    "pg": "^8.23.1",
     "phaser": "4.2.1",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "three": "^0.186.1"
   },
   "devDependencies": {
     "@types/canvas-confetti": "1.9.0",
     "@types/node": "26.6.4",
+    "@types/pg": "^8.23.1",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
+    "@types/three": "^0.186.0",
     "prettier": "3.9.9",
     "tsx": "4.23.15",
     "typescript": "7.0.2"
+  },
+  "engines": {
+    "node": "24.x"
   }
 }

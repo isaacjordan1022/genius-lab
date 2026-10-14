@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240">
+<defs><g id="motifs" stroke-linejoin="round" stroke-linecap="round">
+<path d="m33 20 4 8 9 2-7 6 1 10-7-5-9 5 2-10-7-6 10-2z"/>
+<g transform="translate(114 23) rotate(28)"><rect width="10" height="30" rx="3"/><path d="m0 28 5 9 5-9M0 7h10M5 11v13" fill="none"/></g>
+<g transform="translate(222 20) rotate(-12)"><path d="M0 3Q8 0 15 4Q23 0 30 3V24Q23 21 15 25Q7 21 0 24z"/><path d="M15 4v21M5 8l6 1M20 9l6-1M5 13l6 1M20 14l6-1" fill="none"/></g>
+<g transform="translate(65 105) rotate(-18)"><path d="M0 0h32v7a5 5 0 0 0 0 10v7H0v-7a5 5 0 0 0 0-10z"/><path d="M23 3v3m0 4v4m0 4v3" fill="none"/></g>
+<g transform="translate(174 108) rotate(12)"><path d="M0 3v19a5 5 0 1 1-3-4V0l20-4v21a5 5 0 1 1-3-4V2z"/></g>
+<rect x="278" y="98" width="19" height="19" rx="6" transform="rotate(15 288 108)"/>
+<g transform="translate(21 185) rotate(-30)"><rect width="8" height="27" rx="4"/><path d="M0 26h8l2 10q-6 9-12 0z"/></g>
+<path d="M141 192q4-7 8 0l11 19q4 7-4 7h-23q-8 0-4-7z"/>
+<g transform="translate(231 178)"><circle cx="10" cy="10" r="10"/><path d="M20 10h12M30 3v14M10 20v10M3 29h14" fill="none"/></g>
+</g></defs>
+<use href="#motifs" fill="#84988e" stroke="#84988e" stroke-width="1.7" opacity=".04" transform="translate(0 1.8)"/>
+<use href="#motifs" fill="#fff" stroke="#889a90" stroke-width="1.4" opacity=".075"/>
+</svg>
