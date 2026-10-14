@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { DiagramKind } from "../lib/content-types";
+import RealWorldGallery from "./real-world-gallery";
 import "./enrichment-visuals.css";
 
 function LeatherTanningLab() {
@@ -561,6 +562,102 @@ function GloveBreakinSimulator() {
       <div className="enrichment-visual-header">
         <span className="enrichment-visual-badge">🧪 Break-In Lab · Training Collagen Fibers</span>
         <span className="enrichment-visual-hint">Compare how each break-in method changes the leather</span>
+      </div>
+      <div className="enrichment-stage-canvas">
+        <svg viewBox="0 0 680 230" role="img" aria-label={current.title}>
+          <rect x="0" y="0" width="680" height="230" fill="#0f172a" />
+          {/* Left: Glove Pocket Hinge Schematic */}
+          <rect x="24" y="20" width="300" height="190" rx="14" fill="#1e293b" stroke="#334155" strokeWidth="2" />
+          <text x="174" y="48" textAnchor="middle" fill="#f8fafc" fontSize="17" fontWeight="700">
+            Pocket Hinge Cross-Section
+          </text>
+          {method === 0 && (
+            <g>
+              <path
+                d="M60 155 Q174 88 288 155"
+                fill="none"
+                stroke="#22c55e"
+                strokeWidth="12"
+                strokeLinecap="round"
+              />
+              <circle cx="174" cy="108" r="22" fill="#f8fafc" stroke="#ef4444" strokeWidth="3" />
+              <text x="174" y="190" textAnchor="middle" fill="#86efac" fontSize="16" fontWeight="600">
+                Crisp Bowl Pocket · Hinges Flex Cleanly
+              </text>
+            </g>
+          )}
+          {method === 1 && (
+            <g>
+              <path
+                d="M55 162 C110 185, 230 185, 292 162"
+                fill="none"
+                stroke="#f59e0b"
+                strokeWidth="12"
+                strokeLinecap="round"
+              />
+              <circle cx="130" cy="135" r="7" fill="#38bdf8" />
+              <circle cx="175" cy="142" r="7" fill="#38bdf8" />
+              <circle cx="218" cy="135" r="7" fill="#38bdf8" />
+              <text x="174" y="194" textAnchor="middle" fill="#fde68a" fontSize="16" fontWeight="600">
+                Waterlogged → Stretches Flat & Floppy
+              </text>
+            </g>
+          )}
+          {method === 2 && (
+            <g>
+              <path
+                d="M65 150 L138 132 L174 156 L214 130 L282 150"
+                fill="none"
+                stroke="#ef4444"
+                strokeWidth="10"
+                strokeLinejoin="bevel"
+              />
+              <line x1="138" y1="120" x2="145" y2="148" stroke="#fca5a5" strokeWidth="3" />
+              <line x1="214" y1="118" x2="208" y2="146" stroke="#fca5a5" strokeWidth="3" />
+              <text x="174" y="194" textAnchor="middle" fill="#fca5a5" fontSize="16" fontWeight="600">
+                Shrunken & Cracked Under Heat!
+              </text>
+            </g>
+          )}
+
+          {/* Right: Microscopic Collagen Fiber Weave */}
+          <rect x="348" y="20" width="308" height="190" rx="14" fill="#1e293b" stroke="#334155" strokeWidth="2" />
+          <text x="502" y="48" textAnchor="middle" fill="#f8fafc" fontSize="17" fontWeight="700">
+            Microscopic Collagen Matrix (200x)
+          </text>
+          {method === 0 && (
+            <g>
+              <path d="M380 95 Q440 80 502 95 T624 95" fill="none" stroke="#d97706" strokeWidth="7" strokeLinecap="round" />
+              <path d="M380 135 Q440 120 502 135 T624 135" fill="none" stroke="#d97706" strokeWidth="7" strokeLinecap="round" />
+              {[415, 475, 535, 590].map((x) => (
+                <line key={x} x1={x} y1="92" x2={x} y2="138" stroke="#22c55e" strokeWidth="4" />
+              ))}
+              <text x="502" y="188" textAnchor="middle" fill="#86efac" fontSize="15" fontWeight="600">
+                Cross-links intact + lubricated with balm
+              </text>
+            </g>
+          )}
+          {method === 1 && (
+            <g>
+              <path d="M380 90 Q440 115 502 88 T624 105" fill="none" stroke="#92400e" strokeWidth="7" strokeLinecap="round" />
+              <path d="M380 145 Q440 165 502 140 T624 152" fill="none" stroke="#92400e" strokeWidth="7" strokeLinecap="round" />
+              <text x="502" y="188" textAnchor="middle" fill="#fde68a" fontSize="15" fontWeight="600">
+                Water strips natural oils as it evaporates
+              </text>
+            </g>
+          )}
+          {method === 2 && (
+            <g>
+              <line x1="385" y1="100" x2="485" y2="100" stroke="#dc2626" strokeWidth="8" />
+              <line x1="515" y1="100" x2="618" y2="100" stroke="#dc2626" strokeWidth="8" />
+              <line x1="385" y1="138" x2="495" y2="138" stroke="#dc2626" strokeWidth="8" />
+              <line x1="525" y1="138" x2="618" y2="138" stroke="#dc2626" strokeWidth="8" />
+              <text x="502" y="188" textAnchor="middle" fill="#fca5a5" fontSize="15" fontWeight="600">
+                Denatured protein fibers snap & fracture
+              </text>
+            </g>
+          )}
+        </svg>
       </div>
       <div className="enrichment-controls" role="group" aria-label="Break-in methods">
         {methods.map((m, i) => (
@@ -1281,28 +1378,46 @@ export function VocabQuickGame({
 }
 
 export default function EnrichmentVisual({ kind }: { kind: DiagramKind }) {
+  let lab: React.ReactNode = null;
   switch (kind) {
     case "leather-tanning-lab":
-      return <LeatherTanningLab />;
+      lab = <LeatherTanningLab />;
+      break;
     case "hide-layers-explorer":
-      return <HideLayersExplorer />;
+      lab = <HideLayersExplorer />;
+      break;
     case "glove-anatomy-lab":
-      return <GloveAnatomyLab />;
+      lab = <GloveAnatomyLab />;
+      break;
     case "glove-breakin-simulator":
-      return <GloveBreakinSimulator />;
+      lab = <GloveBreakinSimulator />;
+      break;
     case "baseball-seam-windtunnel":
-      return <BaseballSeamWindtunnel />;
+      lab = <BaseballSeamWindtunnel />;
+      break;
     case "teivah-blueprint-explorer":
-      return <TeivahBlueprintExplorer />;
+      lab = <TeivahBlueprintExplorer />;
+      break;
     case "salanter-storybook":
-      return <SalanterStorybook />;
+      lab = <SalanterStorybook />;
+      break;
     case "shabbos-borer-lab":
-      return <ShabbosBorerLab />;
+      lab = <ShabbosBorerLab />;
+      break;
     case "noach-window-timeline":
-      return <NoachWindowTimeline />;
+      lab = <NoachWindowTimeline />;
+      break;
     case "shabbos-muktzeh-explorer":
-      return <ShabbosMuktzehExplorer />;
+      lab = <ShabbosMuktzehExplorer />;
+      break;
     default:
       return null;
   }
+
+  return (
+    <div className="enrichment-visual-stack">
+      {lab}
+      <RealWorldGallery kind={kind} />
+    </div>
+  );
 }

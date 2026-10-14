@@ -71,6 +71,7 @@ export default function LessonPlayer({
   const [working, setWorking] = useState(false);
   const [voiceBusy, setVoiceBusy] = useState(false);
   const [bonusBusy, setBonusBusy] = useState(false);
+  const [showMaterialDrawer, setShowMaterialDrawer] = useState(false);
   const bonusLeaveGuard = useRef<null | (() => Promise<boolean>)>(null);
   const [review, setReview] = useState(locked);
   const current = useRef({ attempt, q, draft, locked, taught, voiceBusy, bonusBusy });
@@ -370,6 +371,39 @@ export default function LessonPlayer({
       ) : (
         <div className="lesson-activity" data-narration-scope>
           <div className="quiz-exit-controls">
+            {!lesson.assessmentOnly && (
+              <button
+                type="button"
+                className="back-to-material-btn"
+                disabled={working || voiceBusy || bonusBusy}
+                onClick={async () => {
+                  setWorking(true);
+                  window.dispatchEvent(new Event("arcade-stop-audio"));
+                  try {
+                    if (!(await flush())) return;
+                    await onAction({
+                      action: "reopenTeaching",
+                      attemptId: attempt.id,
+                      ...(section ? { chunkId: section.id } : {}),
+                    });
+                  } finally {
+                    setWorking(false);
+                  }
+                }}
+              >
+                ← Back to story &amp; material
+              </button>
+            )}
+            {section && section.teaching.length > 0 && (
+              <button
+                type="button"
+                aria-pressed={showMaterialDrawer}
+                disabled={working || voiceBusy || bonusBusy}
+                onClick={() => setShowMaterialDrawer(!showMaterialDrawer)}
+              >
+                {showMaterialDrawer ? "Hide story & diagrams" : "📖 Peek at story & diagrams"}
+              </button>
+            )}
             <button disabled={working || voiceBusy || bonusBusy} onClick={onWeek}>Quit</button>
             <button disabled={working || voiceBusy || bonusBusy} onClick={async () => {
               setWorking(true);
@@ -381,6 +415,11 @@ export default function LessonPlayer({
               } finally { setWorking(false); }
             }}>Restart quiz</button>
           </div>
+          {showMaterialDrawer && section && section.teaching.length > 0 && (
+            <div className="quiz-material-drawer">
+              <TeachingCards key={`${section.id}-drawer`} blocks={section.teaching} compact />
+            </div>
+          )}
           <div className="activity-topline">
             <span className="eyebrow">
               Question {index + 1} of {questions.length} ·{" "}

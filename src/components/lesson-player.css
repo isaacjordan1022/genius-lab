@@ -254,6 +254,10 @@
 .reflection-squiggle{height:12px;margin:20px 0;background:var(--review-dark);opacity:.45;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='12' viewBox='0 0 40 12'%3E%3Cpath d='M-10 6 Q0 -3 10 6 T30 6 T50 6' fill='none' stroke='black' stroke-width='3'/%3E%3C/svg%3E") repeat-x center}
 .lesson-player .answer-explanation{background:transparent;padding:0;margin:0;max-width:65ch;color:inherit;line-height:1.7}
 .lesson-player .answer-reflection details{margin-top:20px;border-top:1px solid var(--review-mid);padding-top:16px}
+.quiz-exit-controls{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px;align-items:center}
+.quiz-exit-controls .back-to-material-btn{background:#e3f2ff;color:#194e87;border:2px solid #194e87;box-shadow:0 3px 0 #194e87;font-weight:600}
+.quiz-exit-controls .back-to-material-btn:hover:not(:disabled){background:#d0e8ff;color:#123b68}
+.quiz-material-drawer{margin:0 0 22px;padding:16px;border-radius:18px;background:#f8fafc;border:2px dashed #64748b}
 @media(max-width:700px){
  .lesson-route{gap:6px;padding:8px}
  .app-frame .lesson-route button{flex-direction:column;align-items:center;text-align:center;gap:8px;padding:10px 4px}

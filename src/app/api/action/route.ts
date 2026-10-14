@@ -21,6 +21,9 @@ export async function POST(req: NextRequest) {
       case "taught":
         store.taught(body.attemptId, body.chunkId);
         break;
+      case "reopenTeaching":
+        store.reopenTeaching(body.attemptId, body.chunkId);
+        break;
       case "save":
         store.save(body.attemptId, body.questionId, body.answer, body.revision);
         break;

@@ -252,22 +252,26 @@ export function createStore(
         }
         return entry.event === `chunk-pass:${section.id}`;
       }).reduce((sum,entry) => sum + entry.amount,0),
-      teaching: s.attempts.some(
-        (a) =>
-          a.chunkId === c.id &&
-          a.taughtChunkIds?.includes(section.id) &&
-          !a.submittedChunkIds?.includes(section.id),
-      )
-        ? []
-        : section.teaching,
+      teaching:
+        !("version" in c && Number(c.version) >= 4) &&
+        s.attempts.some(
+          (a) =>
+            a.chunkId === c.id &&
+            a.taughtChunkIds?.includes(section.id) &&
+            !a.submittedChunkIds?.includes(section.id),
+        )
+          ? []
+          : section.teaching,
     }));
   }
   function lessonMeta(c: Chunk | DailyLesson) {
     const s = read();
     const sections = publicSections(c, s);
-    const hidden = s.attempts.some(
-      (a) => a.chunkId === c.id && a.taught && !a.submittedAt,
-    );
+    const hidden =
+      !("version" in c && Number(c.version) >= 4) &&
+      s.attempts.some(
+        (a) => a.chunkId === c.id && a.taught && !a.submittedAt,
+      );
 
     return {
       id: c.id,
@@ -580,6 +584,19 @@ export function createStore(
     retryBonusTest: gradeBonusTest,
     reconcileRewards: () => transact(s => {
       for (const a of s.attempts) if ((a.contentVersion ?? 0) >= 3) finalize(s, a);
+      if (s.activeId) {
+        const activeAttempt = s.attempts.find(a => a.id === s.activeId);
+        const inCurrentCatalog = activeAttempt && (
+          lessons.some(l => l.id === activeAttempt.chunkId) ||
+          discovery?.id === activeAttempt.chunkId
+        );
+        if (!inCurrentCatalog) {
+          const latestCurrent = s.attempts
+            .filter(a => lessons.some(l => l.id === a.chunkId) && !a.submittedAt)
+            .at(-1);
+          s.activeId = latestCurrent?.id;
+        }
+      }
     }),
     close: () => db?.close(),
     resume: (attemptId: string) =>
@@ -645,6 +662,27 @@ export function createStore(
         a.quizRestarts.push({ chunkId: section?.id, at: new Date().toISOString(), answers: Object.fromEntries(ids.filter(q => a.answers[q] !== undefined).map(q => [q, a.answers[q]])) });
         for (const q of ids) { delete a.answers[q]; delete a.scores[q]; }
         // Restart questions, not the teaching: there is no reference toggle during a quiz.
+        s.activeId = a.id;
+      }),
+    reopenTeaching: (id: string, learningChunkId?: string) =>
+      transact((s) => {
+        const a = attempt(s, id),
+          lesson = chunk(a.chunkId),
+          sections = learningChunks(lesson);
+        if (a.submittedAt)
+          throw new Error("This attempt is already submitted.");
+        if (sections.length && learningChunkId) {
+          if (a.submittedChunkIds?.includes(learningChunkId))
+            throw new Error("Submitted chunks stay locked.");
+          a.taughtChunkIds = (a.taughtChunkIds ?? []).filter(
+            (cid) => cid !== learningChunkId,
+          );
+          if (!a.taughtChunkIds.length && !(a.submittedChunkIds?.length)) {
+            a.taught = false;
+          }
+        } else {
+          a.taught = false;
+        }
         s.activeId = a.id;
       }),
     taught: (id: string, learningChunkId?: string) =>

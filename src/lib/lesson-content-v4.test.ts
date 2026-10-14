@@ -98,3 +98,47 @@ test("v4 daily lessons and 24-question weekly challenge have complete valid two-
     }
   }
 });
+
+test("reopenTeaching lets a learner exit an active quiz back to the story/material while keeping draft answers", async () => {
+  const { createStore } = await import("./store");
+  const { getCurriculumForChild } = await import("./child-curriculum");
+  const store = createStore(":memory:", () => [], undefined, {
+    catalog: getCurriculumForChild("aharon"),
+  });
+  try {
+    const activeId = store.start("lesson-v4-1");
+    const chunkId = LESSONS_V4[0].chunks[0].id;
+
+    // Complete teaching so the quiz opens
+    store.taught(activeId, chunkId);
+    const inQuizView = store.view();
+    assert.ok(inQuizView.active?.taughtChunkIds?.includes(chunkId));
+    // v4 keeps teaching cards available during quiz for the inline peek drawer
+    assert.ok((inQuizView.chunks[0].chunks[0].teaching.length ?? 0) > 0);
+
+    // Save a draft answer in the quiz
+    const firstQ = inQuizView.active!.questions[0];
+    const validDraft =
+      firstQ.kind === "choice" ? firstQ.choices![0] : "Draft answer while in quiz";
+    store.save(activeId, firstQ.id, validDraft, store.read().revision);
+
+    // Exit quiz back to story/material
+    store.reopenTeaching(activeId, chunkId);
+    const backToStoryView = store.view();
+    assert.equal(
+      backToStoryView.active?.taughtChunkIds?.includes(chunkId) ?? false,
+      false,
+      "Chunk should return to teaching mode",
+    );
+    assert.equal(
+      backToStoryView.active?.answers[firstQ.id],
+      validDraft,
+      "Saved draft answer should be preserved when exiting back to material",
+    );
+  } finally {
+    store.close();
+  }
+});
+
+
+
