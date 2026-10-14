@@ -28,6 +28,28 @@ const dailyLessonsV4: DailyLesson[] = ALL_DAYS.map((day) => {
   const form2 = day.chunks.flatMap((c, idx) =>
     buildChunkQuestions(lessonId, idx, 1, c.form2),
   );
+  const primaryDiagram = day.chunks[1]?.teaching[0]?.diagram;
+
+  const enrichedChunks = day.chunks.map((c, idx) => {
+    const teaching =
+      idx === 0 && primaryDiagram
+        ? c.teaching.map((block) => ({
+            ...block,
+            diagram: block.diagram ?? primaryDiagram,
+          }))
+        : c.teaching;
+    return {
+      id: `${lessonId}-${c.idSuffix}`,
+      title: c.title,
+      subjects: c.subjects,
+      objectives: c.objectives,
+      teaching,
+      questionIds: [
+        form1.slice(idx * 5, idx * 5 + 5).map((q) => q.id),
+        form2.slice(idx * 5, idx * 5 + 5).map((q) => q.id),
+      ],
+    };
+  });
 
   return {
     id: lessonId,
@@ -36,19 +58,9 @@ const dailyLessonsV4: DailyLesson[] = ALL_DAYS.map((day) => {
     subjects: [...new Set(day.chunks.flatMap((c) => c.subjects))],
     objectives: day.chunks.flatMap((c) => c.objectives),
     version: 4,
-    teaching: day.chunks.flatMap((c) => c.teaching),
+    teaching: enrichedChunks.flatMap((c) => c.teaching),
     forms: [form1, form2],
-    chunks: day.chunks.map((c, idx) => ({
-      id: `${lessonId}-${c.idSuffix}`,
-      title: c.title,
-      subjects: c.subjects,
-      objectives: c.objectives,
-      teaching: c.teaching,
-      questionIds: [
-        form1.slice(idx * 5, idx * 5 + 5).map((q) => q.id),
-        form2.slice(idx * 5, idx * 5 + 5).map((q) => q.id),
-      ],
-    })),
+    chunks: enrichedChunks,
   };
 });
 

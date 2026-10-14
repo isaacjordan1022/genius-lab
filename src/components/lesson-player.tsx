@@ -223,7 +223,10 @@ export default function LessonPlayer({
             const ids = c.questionIds[attempt.form];
             const result = submitted ? assessmentResult(ids.map(id => attempt.scores[id] ?? null), ids.length) : null;
             const current = sectionIndex === i;
-            const unavailable = i > 0 && !attempt.submittedChunkIds?.includes(sections[i - 1].id);
+            const unavailable =
+              lesson.version >= 4
+                ? false
+                : i > 0 && !attempt.submittedChunkIds?.includes(sections[i - 1].id);
             const subject = simpleTopics(c.subjects)[0] ?? c.title;
             return (
               <button key={c.id}

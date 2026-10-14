@@ -687,14 +687,17 @@ export function createStore(
       }),
     taught: (id: string, learningChunkId?: string) =>
       transact((s) => {
-        const a = attempt(s, id);
+        const a = attempt(s, id),
+          lesson = chunk(a.chunkId);
         if (a.submittedAt)
           throw new Error("This attempt is already submitted.");
-        const sections = learningChunks(chunk(a.chunkId));
+        const sections = learningChunks(lesson);
+        const isV4 = "version" in lesson && Number(lesson.version) >= 4;
         if (sections.length) {
           const index = sections.findIndex((c) => c.id === learningChunkId);
           if (index < 0) throw new Error("Choose the teaching chunk first.");
           if (
+            !isV4 &&
             sections
               .slice(0, index)
               .some((c) => !a.submittedChunkIds?.includes(c.id))
@@ -734,12 +737,14 @@ export function createStore(
         const a = attempt(s, id),
           lesson = chunk(a.chunkId),
           sections = learningChunks(lesson);
+        const isV4 = "version" in lesson && Number(lesson.version) >= 4;
         const index = sections.findIndex((c) => c.id === learningChunkId);
         if (index < 0) throw new Error("Unknown learning chunk.");
         if (a.submittedChunkIds?.includes(learningChunkId)) return;
         if (a.submittedAt)
           throw new Error("This attempt is already submitted.");
         if (
+          !isV4 &&
           sections
             .slice(0, index)
             .some((c) => !a.submittedChunkIds?.includes(c.id))
