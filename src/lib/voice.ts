@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { DEFAULT_NARRATION_VOICE_ID } from "./voice-options";
 
 export type Alignment = { characters: string[]; character_start_times_seconds: number[]; character_end_times_seconds: number[] };
 export type Narration = { audio_base64: string; alignment: Alignment };
@@ -27,10 +28,11 @@ async function request(path: string, init: RequestInit) {
     throw error;
   } finally { active--; }
 }
-export async function narrate(text: unknown): Promise<Narration> {
+export async function narrate(text: unknown, requestedVoiceId?: unknown): Promise<Narration> {
   if (typeof text !== "string" || !text.trim() || text.length > 12000) throw new Error("Choose a shorter piece to read aloud.");
   key();
-  const voice = process.env.ELEVENLABS_VOICE_ID;
+  const customVoice = typeof requestedVoiceId === "string" ? requestedVoiceId.trim() : "";
+  const voice = customVoice || process.env.ELEVENLABS_VOICE_ID || DEFAULT_NARRATION_VOICE_ID;
   if (!voice || !/^[a-zA-Z0-9_-]+$/.test(voice)) throw new Error("Choose Tick’s narration voice before listening.");
   const model = process.env.ELEVENLABS_TTS_MODEL || "eleven_multilingual_v2";
   const id = createHash("sha256").update(`${voice}:${model}:${text}`).digest("hex");

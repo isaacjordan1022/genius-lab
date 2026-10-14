@@ -1,6 +1,10 @@
 .read-along,.speak-answer{margin-block:18px;font-family:var(--font-lexend),sans-serif;font-size:18px}
-.read-along>button,.speak-answer>button{background:#e0eaff;color:#193977;border:2px solid #afc5ea;border-radius:16px;box-shadow:0 4px 0 #afc5ea;padding:12px 20px;min-height:48px}
-.read-along>button:hover,.speak-answer>button:hover{background:#cadcff;color:#11295a}
+.read-along-bar{display:inline-flex;flex-wrap:wrap;align-items:center;gap:10px}
+.read-along-bar>button,.speak-answer>button{background:#e0eaff;color:#193977;border:2px solid #afc5ea;border-radius:16px;box-shadow:0 4px 0 #afc5ea;padding:12px 20px;min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:9px;white-space:nowrap;font-family:var(--font-lexend),sans-serif;font-size:18px;font-weight:600;cursor:pointer}
+.read-along-bar>button:hover,.speak-answer>button:hover{background:#cadcff;color:#11295a}
+.voice-picker-label{display:inline-flex;align-items:center;gap:8px;background:#f8fafc;border:2px solid #cbd5e1;border-radius:14px;padding:6px 12px;min-height:48px;color:#1e293b;font-size:18px;font-weight:600}
+.voice-picker-tag{color:#475569;font-size:18px}
+.voice-picker-select{font-family:var(--font-lexend),sans-serif;font-size:18px;font-weight:600;color:#0f172a;background:transparent;border:none;outline:none;cursor:pointer;padding-right:6px}
 ::highlight(narration-word){background-color:#ffda4d;color:#352200;text-decoration:underline;text-decoration-color:#9d6b10;text-decoration-thickness:2px}
 .teach-card>.read-along{margin:0;padding:20px 24px 0}
 .teach-card>.read-along p{margin:12px 0 0;line-height:1.6}
@@ -12,6 +16,5 @@
 .voice-controls{display:flex;flex-wrap:wrap;align-items:flex-start;gap:12px 16px;margin:10px 0 18px}
 .voice-controls>.read-along,.voice-controls>.speak-answer{margin:0}
 .voice-controls>.speak-answer{flex:1 1 auto}
-.read-along>button,.speak-answer>button{display:inline-flex;align-items:center;justify-content:center;gap:9px;white-space:nowrap}
 .voice-controls .read-along>p{max-width:30ch}
 @media(max-width:480px){.voice-controls{gap:10px}.voice-controls>.speak-answer{flex:1 1 0;min-width:0}.voice-controls button{padding:10px 12px;gap:6px}}

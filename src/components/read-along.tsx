@@ -2,7 +2,10 @@
 import { useEffect, useRef, useState } from "react";
 import { Volume2, Pause, LoaderCircle } from "lucide-react";
 import { wordTimings } from "@/lib/voice-alignment";
+import { DEFAULT_NARRATION_VOICE_ID, NARRATION_VOICES } from "@/lib/voice-options";
 import "./voice.css";
+
+const VOICE_STORAGE_KEY = "arcade-narration-voice";
 
 type TextSegment = { node: Text; start: number; end: number };
 function visibleNarration(root: Element | null, fallback: string) {
@@ -29,9 +32,30 @@ export default function ReadAlong({ text, disabled = false }: { text: string; di
   const controller = useRef<AbortController | null>(null);
   const frame = useRef(0);
   const sync = useRef<(() => void) | null>(null);
-  const loadedText = useRef("");
+  const loadedKey = useRef("");
+  const [voiceId, setVoiceId] = useState<string>(DEFAULT_NARRATION_VOICE_ID);
   const [status, setStatus] = useState<"idle" | "loading" | "playing" | "paused">("idle");
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem(VOICE_STORAGE_KEY);
+      if (saved && NARRATION_VOICES.some(v => v.id === saved)) {
+        setVoiceId(saved);
+      }
+    } catch {
+      // ignore storage errors
+    }
+    function onVoiceChange(e: Event) {
+      const next = (e as CustomEvent<string>).detail;
+      if (next && NARRATION_VOICES.some(v => v.id === next)) {
+        setVoiceId(next);
+      }
+    }
+    window.addEventListener("arcade-voice-change", onVoiceChange);
+    return () => window.removeEventListener("arcade-voice-change", onVoiceChange);
+  }, []);
+
   useEffect(() => {
     function stopOthers() {
       controller.current?.abort(); audio.current?.pause(); cancelAnimationFrame(frame.current); clearHighlight();
@@ -40,12 +64,33 @@ export default function ReadAlong({ text, disabled = false }: { text: string; di
     window.addEventListener("arcade-stop-audio", stopOthers);
     return () => { stopOthers(); audio.current = null; window.removeEventListener("arcade-stop-audio", stopOthers); };
   }, [text]);
+
+  function selectVoice(nextVoiceId: string) {
+    setVoiceId(nextVoiceId);
+    try {
+      window.localStorage.setItem(VOICE_STORAGE_KEY, nextVoiceId);
+      window.dispatchEvent(new CustomEvent("arcade-voice-change", { detail: nextVoiceId }));
+    } catch {
+      // ignore storage errors
+    }
+    if (status === "playing" || status === "loading") {
+      controller.current?.abort();
+      audio.current?.pause();
+      cancelAnimationFrame(frame.current);
+      clearHighlight();
+      setStatus("idle");
+    }
+    audio.current = null;
+    loadedKey.current = "";
+  }
+
   async function play() {
     setError("");
     if (status === "playing") { audio.current?.pause(); cancelAnimationFrame(frame.current); clearHighlight(); setStatus("paused"); return; }
     window.dispatchEvent(new Event("arcade-stop-audio"));
     const material = visibleNarration(controls.current?.closest("[data-narration-scope]") ?? null, text);
-    if (audio.current && loadedText.current === material.text) {
+    const cacheKey = `${voiceId}::${material.text}`;
+    if (audio.current && loadedKey.current === cacheKey) {
       try { await audio.current.play(); setStatus("playing"); sync.current?.(); } catch { setError("Tap Listen again to start the audio."); }
       return;
     }
@@ -53,7 +98,12 @@ export default function ReadAlong({ text, disabled = false }: { text: string; di
     setStatus("loading");
     const abort = new AbortController(); controller.current = abort;
     try {
-      const response = await fetch("/api/voice/narrate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: material.text }), signal: abort.signal });
+      const response = await fetch("/api/voice/narrate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: material.text, voiceId }),
+        signal: abort.signal,
+      });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Listening is unavailable. Please try again.");
       if (abort.signal.aborted) return;
@@ -65,7 +115,7 @@ export default function ReadAlong({ text, disabled = false }: { text: string; di
         return { ...word, from: start, to: end };
       });
       const player = new Audio(`data:audio/mpeg;base64,${data.audio_base64}`);
-      audio.current = player; loadedText.current = material.text;
+      audio.current = player; loadedKey.current = cacheKey;
       let previous = -1;
       const tick = () => {
         const index = words.findIndex(w => player.currentTime >= w.start && player.currentTime < w.end);
@@ -94,11 +144,36 @@ export default function ReadAlong({ text, disabled = false }: { text: string; di
       setError(e instanceof Error ? e.message : "Listening is unavailable."); setStatus("idle");
     }
   }
-  return <div className="read-along" ref={controls}>
-    <button type="button" disabled={disabled || status === "loading"} onClick={() => void play()} aria-label={status === "playing" ? "Pause narration" : "Listen to this text"}>
-      {status === "loading" ? <LoaderCircle size={21} aria-hidden="true"/> : status === "playing" ? <Pause size={21} aria-hidden="true"/> : <Volume2 size={21} aria-hidden="true"/>}
-      {status === "loading" ? "Preparing voice…" : status === "playing" ? "Pause" : "Listen"}
-    </button>
-    {error && <p role="status">{error}</p>}
-  </div>;
+  return (
+    <div className="read-along" ref={controls}>
+      <div className="read-along-bar">
+        <button
+          type="button"
+          disabled={disabled || status === "loading"}
+          onClick={() => void play()}
+          aria-label={status === "playing" ? "Pause narration" : "Listen to this text"}
+        >
+          {status === "loading" ? <LoaderCircle size={21} aria-hidden="true" /> : status === "playing" ? <Pause size={21} aria-hidden="true" /> : <Volume2 size={21} aria-hidden="true" />}
+          {status === "loading" ? "Preparing voice…" : status === "playing" ? "Pause" : "Listen"}
+        </button>
+        <label className="voice-picker-label">
+          <span className="voice-picker-tag">Voice:</span>
+          <select
+            className="voice-picker-select"
+            value={voiceId}
+            disabled={disabled || status === "loading"}
+            onChange={e => selectVoice(e.target.value)}
+            aria-label="Choose narration voice"
+          >
+            {NARRATION_VOICES.map(v => (
+              <option key={v.id} value={v.id}>
+                {v.label}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+      {error && <p role="status">{error}</p>}
+    </div>
+  );
 }

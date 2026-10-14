@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
   try {
     await requireChild(req);
     if (Number(req.headers.get("content-length")) > 60000) throw new Error("That text is too long.");
-    const { text } = await req.json();
-    return NextResponse.json(await narrate(text), { headers: { "Cache-Control": "no-store" } });
+    const { text, voiceId } = await req.json();
+    return NextResponse.json(await narrate(text, voiceId), { headers: { "Cache-Control": "no-store" } });
   } catch (e) { return fail(e, 503); }
 }
