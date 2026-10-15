@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import type { DiagramKind } from "../lib/content-types";
+import { TOBI_AND_EXTRA_PACKS } from "./tobi-visual-packs";
 
-type Hotspot = {
+export type Hotspot = {
   id: string;
   number: number;
   x: number; // percentage 0..100
@@ -12,13 +13,13 @@ type Hotspot = {
   detail: string;
 };
 
-type CauseEffectStep = {
+export type CauseEffectStep = {
   step: string;
   title: string;
   body: string;
 };
 
-type GalleryItem = {
+export type GalleryItem = {
   src: string;
   fallbackSrc?: string;
   alt: string;
@@ -31,7 +32,7 @@ type GalleryItem = {
   sourceUrl?: string;
 };
 
-type VisualBlueprintPack = {
+export type VisualBlueprintPack = {
   heading: string;
   subheading: string;
   heroPhoto: {
@@ -629,6 +630,7 @@ const VISUAL_PACKS: Partial<Record<DiagramKind, VisualBlueprintPack>> = {
     ],
     cards: [],
   },
+  ...TOBI_AND_EXTRA_PACKS,
 };
 
 function PhotoWithFallback({

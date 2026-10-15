@@ -16,6 +16,7 @@ import {
   WEEK_OBJECTIVES_V3 as WEEK_OBJECTIVES,
 } from "./lesson-content-v3";
 import { LESSONS_V4 } from "./lesson-content-v4";
+import { TOBI_DAY_ONE, TOBI_LESSONS_V4 } from "./tobi-curriculum";
 import {
   createLearningAI,
   AI_PENDING_MESSAGE,
@@ -183,6 +184,8 @@ export function createStore(
       ...lessons,
       ...(discovery ? [discovery] : []),
       ...LESSONS_V4,
+      ...TOBI_LESSONS_V4,
+      TOBI_DAY_ONE,
       ...LESSONS_V3,
       ...LESSONS_V2,
       HOW_THINGS_WORK,
@@ -898,7 +901,7 @@ export function createStore(
           { name: "Ezra", earned: 0 },
         ],
         chunks: lessons.map(lessonMeta),
-        archivedLessons: [...LESSONS_V3, ...LESSONS_V2, ...CHUNKS]
+        archivedLessons: [TOBI_DAY_ONE, ...LESSONS_V3, ...LESSONS_V2, ...CHUNKS]
           .filter((c) => !lessons.some((l) => l.id === c.id) && s.attempts.some((a) => a.chunkId === c.id))
           .map(lessonMeta),
         active: activeAttempt

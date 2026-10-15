@@ -5,7 +5,11 @@ import {
   WEEK_OBJECTIVES_V4,
   WEEK_TITLE_V4,
 } from "./lesson-content-v4";
-import { TOBI_LESSONS } from "./tobi-curriculum";
+import {
+  TOBI_LESSONS_V4,
+  TOBI_WEEK_OBJECTIVES_V4,
+  TOBI_WEEK_TITLE_V4,
+} from "./tobi-curriculum";
 
 export type ChildId = "aharon" | "tobi";
 export type ChildCurriculum = {
@@ -19,12 +23,12 @@ export type ChildCurriculum = {
 export function getCurriculumForChild(childId: ChildId): ChildCurriculum {
   if (childId === "tobi")
     return {
-      lessons: TOBI_LESSONS,
+      lessons: TOBI_LESSONS_V4,
       discovery: undefined,
-      weekTitle: "Week 1 · Look closely, discover something new",
-      weekObjectives: TOBI_LESSONS.flatMap((l) => l.objectives),
+      weekTitle: TOBI_WEEK_TITLE_V4,
+      weekObjectives: TOBI_WEEK_OBJECTIVES_V4,
       profile: { id: "tobi", name: "Tobi", grade: 2, age: 7 },
-      publishedDays: 1,
+      publishedDays: 5,
     };
   if (childId !== "aharon") throw new Error("Unknown child curriculum");
   return {

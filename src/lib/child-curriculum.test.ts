@@ -5,11 +5,16 @@ import {
   getCurriculumForChild,
 } from "./child-curriculum";
 import { LESSONS_V4 } from "./lesson-content-v4";
-import { TOBI_DAY_ONE, TOBI_READING } from "./tobi-curriculum";
+import {
+  TOBI_DAY_ONE,
+  TOBI_LESSONS_V4,
+  TOBI_READING,
+  TOBI_READING_PASSAGES_V4,
+} from "./tobi-curriculum";
 import { gradeObjective, publicQuestion, validAnswer } from "./rules";
 import { createLearningAI } from "./learning-ai";
 
-test("child catalog isolates Tobi’s publication and honestly reports tonight-only scope", () => {
+test("child catalog isolates Tobi’s v4 visual curriculum with 5 days, weekly challenge, and zero math", () => {
   const a = getCurriculumForChild("aharon");
   const t = getCurriculumForChild("tobi");
   assert.equal(a.profile.name, "Aharon Zev");
@@ -19,14 +24,30 @@ test("child catalog isolates Tobi’s publication and honestly reports tonight-o
   assert.equal(t.profile.name, "Tobi");
   assert.equal(t.profile.grade, 2);
   assert.equal(t.profile.age, 7);
-  assert.equal(t.publishedDays, 1);
-  assert.equal(t.lessons.length, 1);
+  assert.equal(t.publishedDays, 5);
+  assert.equal(t.lessons, TOBI_LESSONS_V4);
+  assert.equal(t.lessons.length, 6);
   assert.equal(t.lessons[0].order, 1);
-  assert.equal(
-    t.lessons.some((l) => l.assessmentOnly),
-    false,
-  );
+  assert.equal(t.lessons[5].assessmentOnly, true);
   assert.equal(t.discovery, undefined);
+  assert.equal(TOBI_READING_PASSAGES_V4.length, 5);
+  for (let i = 0; i < 5; i++) {
+    const day = t.lessons[i];
+    assert.equal(day.version, 4);
+    assert.ok(
+      !day.subjects.some((s) => /math|fraction/i.test(s)),
+      "Zero math subjects in Tobi v4",
+    );
+    assert.ok(
+      day.teaching.every((b) => !b.fractionModel),
+      "Zero fraction models in Tobi v4",
+    );
+    // Every chunk in Tobi's v4 lessons has an interactive visual diagram
+    assert.ok(
+      day.chunks.every((c) => c.teaching.some((b) => !!b.diagram)),
+      `All chunks in Tobi Day ${i + 1} have interactive diagrams`,
+    );
+  }
   assert.ok(
     t.lessons.every((l) => !a.lessons.some((other) => other.id === l.id)),
   );

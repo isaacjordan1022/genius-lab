@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { DiagramKind } from "../lib/content-types";
 import RealWorldGallery from "./real-world-gallery";
+import { renderTobiEnrichmentLab } from "./tobi-enrichment-labs";
 import "./enrichment-visuals.css";
 
 function LeatherTanningLab() {
@@ -1411,7 +1412,9 @@ export default function EnrichmentVisual({ kind }: { kind: DiagramKind }) {
       lab = <ShabbosMuktzehExplorer />;
       break;
     default:
-      return null;
+      lab = renderTobiEnrichmentLab(kind);
+      if (!lab) return null;
+      break;
   }
 
   return (

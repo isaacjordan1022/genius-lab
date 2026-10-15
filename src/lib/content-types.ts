@@ -11,7 +11,17 @@ export type DiagramKind =
   | "salanter-storybook"
   | "shabbos-borer-lab"
   | "noach-window-timeline"
-  | "shabbos-muktzeh-explorer";
+  | "shabbos-muktzeh-explorer"
+  | "tobi-wool-spinning-lab"
+  | "tobi-umbrella-raincoat-lab"
+  | "tobi-honeycomb-wax-lab"
+  | "tobi-piano-strings-lab"
+  | "tobi-balloon-hotair-lab"
+  | "tobi-bereishis-days-explorer"
+  | "tobi-akiva-water-stone"
+  | "tobi-shabbos-candles-kiddush"
+  | "tobi-noach-rainbow-ark"
+  | "tobi-shabbos-treasure-sorting";
 
 export type Question = {
   id: string;

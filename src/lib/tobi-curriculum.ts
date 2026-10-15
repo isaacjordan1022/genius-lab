@@ -549,3 +549,103 @@ export const TOBI_DAY_ONE: DailyLesson = {
   })),
 };
 export const TOBI_LESSONS: DailyLesson[] = [TOBI_DAY_ONE];
+
+// ============================================================================
+// TOBI V4 VISUAL ENRICHMENT CURRICULUM (5 DAYS + WEEKLY CHALLENGE, ZERO MATH)
+// ============================================================================
+import { buildChunkQuestions, type DayBlueprint } from "./v4-types";
+import { TOBI_DAYS_1_AND_2 } from "./tobi-v4-days-1-2";
+import { TOBI_DAYS_3_AND_4 } from "./tobi-v4-days-3-4";
+import { TOBI_DAY_5, buildTobiWeeklyTestV4 } from "./tobi-v4-day-5-and-weekly";
+
+export const TOBI_WEEK_TITLE_V4 =
+  "Week 1 · Cozy Wool, Raindrop Shields, Honeybee Hexagons, Piano Strings & Shabbos";
+
+export const TOBI_WEEK_OBJECTIVES_V4 = [
+  "Learn 20 fun vocabulary words with definitions, example sentences, and word-matching games",
+  "Read and discuss short 3-paragraph stories using clues and voice-graded answers",
+  "Explore with real photos and cutaway diagrams how wool becomes a sweater, umbrellas repel rain, bees build hexagons, pianos make music, and hot-air balloons float",
+  "Discover Parshat Bereishis & Noach (the 6 Days of Creation, Shabbos Menucha, Noach's kindness in the Teivah, the Dove's olive leaf, and the Rainbow promise)",
+  "Learn from Rabbi Akiva how gentle water drops carved hard stone—and how daily Torah shapes our heart",
+  "Practice Hilchot Shabbos: welcoming Shabbos with two candles (Zachor & Shamor), Kiddush, two Challot (Lechem Mishneh), picking treats by hand, and spotting Muktzeh",
+];
+
+const TOBI_ALL_DAYS_V4: DayBlueprint[] = [
+  ...TOBI_DAYS_1_AND_2,
+  ...TOBI_DAYS_3_AND_4,
+  TOBI_DAY_5,
+];
+
+export const TOBI_READING_PASSAGES_V4 = TOBI_ALL_DAYS_V4.map(
+  (d) => d.readingPassage,
+);
+
+const tobiDailyLessonsV4: DailyLesson[] = TOBI_ALL_DAYS_V4.map((day) => {
+  const lessonId = `tobi-lesson-v4-${day.order}`;
+  const form1 = day.chunks.flatMap((c, idx) =>
+    buildChunkQuestions(lessonId, idx, 0, c.form1),
+  );
+  const form2 = day.chunks.flatMap((c, idx) =>
+    buildChunkQuestions(lessonId, idx, 1, c.form2),
+  );
+  const primaryDiagram = day.chunks[1]?.teaching[0]?.diagram;
+
+  const enrichedChunks = day.chunks.map((c, idx) => {
+    const teaching =
+      idx === 0 && primaryDiagram
+        ? c.teaching.map((block) => ({
+            ...block,
+            diagram: block.diagram ?? primaryDiagram,
+          }))
+        : c.teaching;
+    return {
+      id: `${lessonId}-${c.idSuffix}`,
+      title: c.title,
+      subjects: c.subjects,
+      objectives: c.objectives,
+      teaching,
+      questionIds: [
+        form1.slice(idx * 5, idx * 5 + 5).map((q) => q.id),
+        form2.slice(idx * 5, idx * 5 + 5).map((q) => q.id),
+      ],
+    };
+  });
+
+  return {
+    id: lessonId,
+    order: day.order,
+    title: day.title,
+    subjects: [...new Set(day.chunks.flatMap((c) => c.subjects))],
+    objectives: day.chunks.flatMap((c) => c.objectives),
+    version: 4,
+    teaching: enrichedChunks.flatMap((c) => c.teaching),
+    forms: [form1, form2],
+    chunks: enrichedChunks,
+  };
+});
+
+const tobiWeeklyTestV4: DailyLesson = {
+  id: "tobi-weekly-test-v4",
+  order: 6,
+  title: "Weekly Challenge · Wool, Umbrellas, Honeybees, Pianos & Shabbos",
+  subjects: [
+    "Vocabulary",
+    "Reading & thinking",
+    "How things work",
+    "Torah",
+    "Gedolim",
+    "Halacha",
+  ],
+  objectives: TOBI_WEEK_OBJECTIVES_V4,
+  version: 4,
+  assessmentOnly: true,
+  teaching: [],
+  forms: [buildTobiWeeklyTestV4(0), buildTobiWeeklyTestV4(1)],
+  chunks: [],
+};
+
+export const TOBI_LESSONS_V4: DailyLesson[] = [
+  ...tobiDailyLessonsV4,
+  tobiWeeklyTestV4,
+];
+
